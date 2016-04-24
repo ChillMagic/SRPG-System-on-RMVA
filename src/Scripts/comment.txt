@@ -1,0 +1,1033 @@
+﻿# module SRPG
+#   class Battler
+#     include Data::Battler
+#     attr_accessor *BattleData
+#     def initialize(hp, atk, defe)
+#       self.hp  = hp
+#       self.atk = atk
+#       self.def = defe
+#     end
+#     def attack(battler)
+#       dis = self.atk - battler.def
+#       battler.hp -= dis > 0 ? dis : 0
+#       #battler.hp = 0 if battler.dead?
+#     end
+#     def back_attack(battler)
+#       dis = (self.atk - battler.def) / 2
+#       battler.hp -= dis > 0 ? dis : 0
+#     end
+#     def skill#(battler)
+#       #self.atk += self.def
+#       #self.def = 0
+#       #attack(battler)
+#       self.hp += self.hp * 0.3 + 100
+#       #battler.back_attack(self)#skill(self) unless battler.dead?
+#     end
+#     def recover(hp)
+#       putError("Wrong Number with hp#{hp}") if hp <= 0
+#       #hp = 0 if hp < 0
+#       self.hp += hp
+#     end
+#     def skill
+#       recover((self.hp * 0.03).to_i + 100)
+#     end
+#     def dead?
+#       self.hp <= 0
+#     end
+#     def set(element, data)
+#       eval("self." + element.to_s + " = data")
+#     end
+#     def to_s
+#       "HP(#{self.hp}), ATK(#{self.atk}), DEF(#{self.def})"
+#     end
+#   end
+# end
+    def to_evamap
+      meva = get_mxy
+      map = EvaMap.new([meva[2],meva[0]],[meva[3],meva[1]],0)
+      each { |x,y| map[x,y] = 1 }
+      map
+    end
+
+class SRPG::Map
+ #
+ # def circumgyrate(turn, rec_x = nil, rec_y = nil)
+ #   unless rec_x.nil?
+ #     temp = self[rec_x, rec_y]
+ #     record = lambda { temp }
+ #     self[rec_x, rec_y] = record
+ #   end
+ #   x = y = 0
+ #   tx = ty = rx = ry = 0
+ #   data = Array.new
+ #   if @ran_x.nil?
+ #     min_x = min_y = 0
+ #   else
+ #     min_x, min_y = @ran_x[0], @ran_y[0]
+ #     p [min_x, min_y]
+ #     #!!!!!!!!!!!!!!!!
+ #   end
+ #   func = lambda do |px, py, &block|
+ #     x, y = px, py
+ #     for ty in min_y.upto(y)#y.times
+ #       ry = y - ty - 1
+ #       for tx in min_x.upto(x)#x.times
+ #         rx = x - tx - 1
+ #         data.push(block.call)
+ #       end
+ #     end
+ #   end
+ #   case turn
+ #     when :u ; func.call(@x, @y) { get(tx, ty) } # Up
+ #     when :ur; func.call(@x, @y) { get(rx, ty) } # Up Reversal
+ #     when :d ; func.call(@x, @y) { get(rx, ry) } # Down
+ #     when :dr; func.call(@x, @y) { get(tx, ry) } # Down Reversal
+ #     when :l ; func.call(@y, @x) { get(ry, tx) } # Left
+ #     when :lr; func.call(@y, @x) { get(ty, tx) } # Left Reversal
+ #     when :r ; func.call(@y, @x) { get(ty, rx) } # Right
+ #     when :rr; func.call(@y, @x) { get(ry, rx) } # Right Reversal
+ #     else; return putError("Parameter Wrong in Method 'circumgyrate'.")
+ #   end
+ #   map = SRPG::Map.new(x,y,data)
+ #   if rec_x.nil?
+ #     map
+ #   else
+ #     map.each_all do |x, y, e|
+ #       if (e == record)
+ #         rec_x, rec_y = x, y
+ #         map.set(x,y,record.call)
+ #       end
+ #     end
+ #     [map, rec_x, rec_y]
+ #   end
+ #   end
+
+  # def circumgyrate(turn)
+  #   putError("The method(#{__method__}) will be deleted.")
+  #   x = y = 0
+  #   tx = ty = rx = ry = 0
+  #   data = Array.new
+  #   func = lambda do |px, py, &block|
+  #     x, y = px, py
+  #     for ty in y.times
+  #       ry = y - ty - 1
+  #       for tx in x.times
+  #         rx = x - tx - 1
+  #         data.push(block.call)
+  #       end
+  #     end
+  #   end
+  #   case turn
+  #     when :u ; func.call(@x, @y) { get(tx, ty) } # Up
+  #     when :ur; func.call(@x, @y) { get(rx, ty) } # Up Reversal
+  #     when :d ; func.call(@x, @y) { get(rx, ry) } # Down
+  #     when :dr; func.call(@x, @y) { get(tx, ry) } # Down Reversal
+  #     when :l ; func.call(@y, @x) { get(ry, tx) } # Left
+  #     when :lr; func.call(@y, @x) { get(ty, tx) } # Left Reversal
+  #     when :r ; func.call(@y, @x) { get(ty, rx) } # Right
+  #     when :rr; func.call(@y, @x) { get(ry, rx) } # Right Reversal
+  #     else; return putError("Parameter Wrong in Method 'circumgyrate'.")
+  #   end
+  #   SRPG::Map.new(x,y,data)
+  # end
+end
+
+module SRPG
+  class EvaMap < Map
+    def initialize(ran_x, ran_y, data = nil)
+      @ran_x, @ran_y = ran_x, ran_y
+      super(ran_x[1].abs+(ran_x[0] > 0 ? 0 : -ran_x[0])+1, ran_y[1].abs+(ran_y[0] > 0 ? 0 : -ran_y[0])+1, data)
+    end
+    def get(x, y)
+      super(x-@ran_x[0], y-@ran_y[0])
+    end
+    def set(x, y, inc)
+      super(x-@ran_x[0], y-@ran_y[0], inc)
+    end
+    def out?(x, y)
+      (x < @ran_x[0] || x > @ran_x[1]) || (y < @ran_y[0] || y > @ran_y[1])
+    end
+    def printf
+      mX, mY = [@x,MaxShowSize].min, [@y,MaxShowSize].min
+      mY.times { |y| mX.times { |x| yield(get(x+@ran_x[0],y+@ran_y[0])) }; print("\n") }
+    end
+  end
+end
+
+# map = SRPG::SettlerMap.new(10,10)
+# actor = SRPG::Settler.new(SRPG::Flag::Actor)
+# enemy = SRPG::Settler.new(SRPG::Flag::Enemy)
+
+
+# SRPG::Debugger.new(binding,map).start
+
+
+    # p a
+    # # route = SRPG::Route.new(SRPG::Map.new(10,10,1),5,5)
+    # # route.search(3)
+    # route = SRPG::Route.new(SRPG::Map.new(500,500,1),250,250)
+    # route.search(500)
+    # a = route.get_points.to_a
+    # # p route.record[1]
+    # SRPG::Route.prints(route.movmap) if route.movmap.x < 10
+    # # p SRPG::Range.range(25).to_a.size
+    # p a.size
+
+      #@map = SettlerMap.new(5,5)
+      #a  = Settler.new(Actor,1,Battler.new(1000,10,10))
+      #e1 = Settler.new(Enemy,1,Battler.new(100,15,5))
+      #e2 = Settler.new(Enemy,2,Battler.new(500,20,0))
+      #m  = map = @map
+      #m[0,1] = e1
+      #m[1,0] = e2
+      #printMap
+      #m[0,0] = a
+      #printOn
+      #list = SettlerList.new.push(a,e1,e2)
+      #data = SettlerDatas.new
+      #data.push(a)
+      #data.push(e1,e2)
+      #puts list
+      #puts data
+      #@map.create_typemap.prints
+      #def set(sym,value); eval("@rec=value");eval("#{sym.to_s}=@rec",@binding); end
+      #def set2(sym)
+      #  lambda { |value| set(sym,value) }
+      #end
+      #def v(settler)
+      #  settler.data
+      #end
+      #string = "Map(\n010\n111\n010\n0P0\n)"
+    #puts(string)
+      #data = [[0,0],[0,1],[1,0]].each
+      #p data
+      #p data.class
+      #range = Range.new(data)
+      #a = range.circumgyrate(0)
+      #a.each { |x,y| p [x,y] }
+      #p a.collect { |x,y| [0, 0] }.each { |x,y| p [x,y] }
+      #p a.class
+      #p a.public_methods
+  def move_with(direction)
+    move_to(*SRPG::Route.dirMove(direction,@x,@y))
+  end
+
+    def collect(&block)
+      p "---------sss-----"
+      Range.new do |point|
+        @data.collect do |tx, ty|
+          point << yield(tx,ty)
+        end
+      end
+    end
+map = SRPG::Map.new(7,5,1)
+map[3,3] = 0
+map[4,4] = 0
+map[4,2] = 0
+map.prints
+route = SRPG::Route.new(map,4,3)
+route.search(100)
+p route.get_path(3,4)
+  def getPoints
+    return @points if defined?(@points)
+    @points = Array.new
+    @movmap.each_index do |x,y|
+      e = @movmap.get(x,y)
+      @points.push([x,y]) if (e >= 0 && e <= MaxMoves)
+    end
+    return @points
+  end
+  def points_each
+    return SRPG::Range.new(to_enum(__method__)) if (!block_given?)
+    if defined?(@points)
+      @points.each { |p| yield(*p) }
+      return self
+    end
+    @movmap.each_index do |x,y|
+      e = @movmap.get(x,y)
+      yield(x,y) if (e <= MaxMoves && e >= 0)
+    end
+    return self
+  end
+  
+map = SRPG::Map.new(3,3,Array.new(9){|i|i+1})
+#map.prints
+map.circumgyrate(:d).prints
+
+pmap = SRPG::Map.new(3,3)
+pmap.set_with_index { |x,y| [x,y] }.prints
+puts "----"
+pmap.circumgyrate(:r).new_with(pmap.clone.set_with_index{|x,y|[x-2,y-0]}){|e1,e2|[e1,e2]}.prints
+puts "----"
+pmap.circumgyrate(:d).new_with(pmap.clone.set_with_index{|x,y|[x-2,y-2]}){|e1,e2|[e1,e2]}.prints
+puts "----"
+pmap.circumgyrate(:l).new_with(pmap.clone.set_with_index{|x,y|[x-0,y-2]}){|e1,e2|[e1,e2]}.prints
+puts "----"
+
+
+def cir_point(point, turn)
+  x, y = point
+  case turn
+    when   +0; [x,   y]
+    when  +90; [-y,  x]
+    when +180; [-x, -y]
+    when +270; [y,  -x]
+  end
+end
+
+string = "Map(100\n111\n0P0)"
+mm0 = SRPG::Map.new(5,6,0)
+mm1 = mm0.clone
+range = SRPG::Range.match_map(string)
+range.each { |x,y| mm0[x+2,y+3] = 1 }
+range.circumgyrate(270,0,0) { |x,y| mm1[x+2,y+3] = 1 }
+mm0.prints
+puts
+mm1.prints
+
+#pmap.clone.set_with_index{|x,y|cir_point([x,y],0)}.prints
+#puts
+#pmap.clone.set_with_index{|x,y| cx,cy = cir_point([x,y],90); [cx, cy]}.prints
+
+
+#p a = SRPG::Range.ranges(1,0,0)
+##p b = SRPG::Range.ranges(1,1,0)
+##p c = a.uinter(b)
+#map, x, y = a.to_evamap
+#map.prints
+#map, x, y = map.circumgyrate(:r,0,0)
+#p [x,y]
+#map.prints
+#p m = a.to_evamap
+#m.prints
+#puts "-"
+#p b = SRPG::Range.ranges(1,1,2)
+#p b.within_range?(a)
+###c.each { |x,y| p [x,y] }
+#SRPG::Map.new(4,4,0).set_with_range(a){1}.prints(); puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(b){1}.prints(); puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(a.inter(b)){1}.prints
+#puts("---")
+
+p a = SRPG::Range.ranges(1,1,2)
+p b = SRPG::Range.ranges(1,1,1)
+p a.in_range?(b)
+#c.each { |x,y| p [x,y] }
+SRPG::Map.new(4,4,0).set_with_range(c = a.diff(b)){1}.prints
+SRPG::Map.new(4,4,0).set_with_range(d = a.uinter(b)){1}.prints
+SRPG::Map.new(4,4,0).set_with_range(c.uinter(d)){1}.prints
+p c.equal?(d)
+#puts("---")
+
+
+      # Match
+      # Record
+      #map.each_all { |x,y,e| yield(x-px, y-py, e) }
+    # Match Map Range
+    def self.matchRange(*args)
+      matchMap(*args) { |x,y,e| yield(x,y) if (e != 0) }
+    end
+    #-----------------------------------------------
+    # Create Range Arrays
+    #-----------------------------------------------
+    def self.create(method_name, *args)
+      data = Array.new
+      send(method_name,*args) { |x,y| data.push([x,y]) }
+      data
+    end
+    #-----------------------------------------------
+    # Iterative Range in Map
+    #-----------------------------------------------
+    def self.map_each(map, method_name, *args)
+      send(method_name,*args) { |x,y| yield(map[x,y]) }
+    end
+##
+## r1 + r2
+## r1 - r2
+## r1 ^ r2
+##
+p a = SRPG::Range.new(:ranges,1,1,1)
+p b = SRPG::Range.new(:ranges,2,2,1)
+#c.each { |x,y| p [x,y] }
+#SRPG::Map.new(4,4,0).set_with_range(a){1}.prints
+#puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(b){1}.prints
+#puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(a.inter(b)){1}.prints
+#puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(a.union(b)){1}.prints
+#puts("---")
+#SRPG::Map.new(4,4,0).set_with_range(a.diff(b)){1}.prints
+#p map.get_with_range(a) { |a| print(a,",") }
+#a.data.each{ |x,y| p [x,y] }
+
+
+map = SRPG::Map.new(10,10,0)
+map[5,5] = 1
+route = SRPG::Route.new(SRPG::Map.new(10,10,1),5,5)
+route.search(2)
+
+string = "
+  Map(
+    0 1 0
+    1 1 1
+    0 P 0
+  )
+"
+
+map,x,y = SRPG::MatchMap.matchMap(string,2)# { |x,y,e| map[x,y] = e }
+map = map.circumgyrate(:r)
+map.prints
+module SRPG
+  class Range# < Enumerator
+    def initialize(&block)
+      @data = Enumerator.new { |p|
+        def p.set(x, y)
+          p << [x, y]
+        end
+        puts p.class
+        yield(p)
+      }
+    end
+    def each(&block)
+      @data.each(&block)
+    end
+  end
+end
+
+p SRPG::Range.range(1,1,0)# { |x,y| p [x,y] }
+fib = SRPG::Range.new do |p|
+  p.yield [0, 1]
+  puts p.class
+end
+
+    def self.get_enum(meth, bind)
+      str = ":#{meth}"
+      method(meth).parameters.each { |a| str << ",#{a[1]}" }
+      eval("return to_enum(#{str})",bind)
+    end
+      get_enum(__method__,binding) if (!block_given?)
+p fib.instance_variable_get(:@data).next#.each { |x,y| p [x,y] }
+#p fib.instance_variable_get(:@data).next
+
+
+=begin
+def to_hex(i)
+  if (i < 10)
+    i.to_s
+  else
+    case i
+      when 10; "A"
+      when 11; "B"
+      when 12; "C"
+      when 13; "D"
+      when 14; "E"
+      when 15; "F"
+    end
+  end
+end
+
+require_relative 'System'
+require_relative 'Map'
+
+r1 = [[5,5],[5,4]]
+r2 = [[5,5],[5,4],[5,3],[6,3],[7,3]]
+r3 = [[5,5],[5,4],[4,4],[4,3],[3,3],[3,2]]
+
+m1 = SRPG::Map.new(8,8,0)
+m2 = m1.clone
+m3 = m1.clone
+
+def test(route, map)
+  route.each_with_index { |r,i| map[*r] = i+1 }
+  puts "-----------------"
+  map.prints
+  flags = SRPG::SpriteBasic::Route.get_flags(route)
+  # To String
+  str = "" #<< flags.to_s
+  flags.each { |e| str << to_hex(e) }
+  puts str
+end
+
+module SRPG::SpriteBasic::Route
+  def self.ttt(a,b)
+    puts to_hex ndir(a,b)#get_flag(2,ndir(a,b))
+  end
+end
+
+test(r1,m1)
+test(r2,m2)
+test(r3,m3)
+=end
+
+
+#=================================================
+# Testing Code
+#=================================================
+
+#module SRPG
+=begin
+  #---------------------------------
+  # Set
+  # Set Data for Test.
+  #---------------------------------
+  # Only Using in the Convert.
+  M = Route::MaxMoves + 1
+  MapData = [
+      [ 1,  true  ],  # 0: Bland
+      [ 1,  true  ],  # 1: Self
+      [ 1,  false ],  # 2: Party
+      [ 0,  false ],  # 3: Enemy
+      [ 0,  false ],  # 4: Barrier
+      [ 2,  true  ],  # 5: Hinder
+      [ M,  true  ],  # 6: ZOC
+      [ 0,  false ]   # 7: Other
+  ]
+  #---------------------------------
+  # Test 1
+  # Test class Map & class Route.
+  #---------------------------------
+  puts("\nTest 1:")
+  # Pass One Dimensional Array.
+  # Set Data.
+  data = [
+      [0,0,0],
+      [0,5,0],
+      [0,0,1],
+  ].flatten
+  map = Map.new(3,3,data)
+  puts('realmap:')
+  map.prints
+  # Convert Map to Pass Map.
+  map = map.new { |e| MapData[e][0] }
+  # Or:
+  # data.collect! { |e| MapData[e][0] }
+  # map = Map.new(3,3,data)
+  route = Route.new(map,2,2)
+  route.search(3)
+  # Print the Pass Map
+    puts('passmap:')
+    prints(map)
+  # Print the Move Map
+    puts('movmap:')
+    prints(route.movmap)
+  # Print the Way Map
+    puts('waymap:')
+    prints(route.waymap)
+  #---------------------------------
+  # Test 2
+  # Test Correct Move.
+  #---------------------------------
+  puts("\nTest 2:")
+  data = [
+      [0,0,5],
+      [4,0,5],
+      [4,1,0],
+  ].flatten.collect { |e| MapData[e][0] }
+  map = Map.new(3,3,data)
+  route = Route.new(map,1,2)
+  route.search(6)
+  path = route.getPath(0,0)
+  # Print
+    puts('passmap:')
+    prints(map)
+    puts('movmap:')
+    prints(route.movmap)
+    puts('waymap:')
+    prints(route.waymap)
+    print(path,"\n")
+  #---------------------------------
+  # Test 3
+  # Test Correct Move 2.
+  #---------------------------------
+  puts("\nTest 3:")
+  data = [
+      [0,0,0],
+      [0,4,5],
+      [0,0,1],
+  ].flatten.collect { |e| MapData[e][0] }
+  map = Map.new(3,3,data)
+  route = Route.new(map,2,2)
+  route.search(5)
+  # Print
+    puts('passmap:')
+    prints(map)
+    puts('movmap:')
+    prints(route.movmap)
+    puts('waymap:')
+    prints(route.waymap)
+  #---------------------------------
+  # Test 4
+  # Test Correct Move 3. ZOC.
+  #---------------------------------
+  puts("\nTest 4:")
+  data = [
+      [0,6,0,0],
+      [6,3,6,0],
+      [0,6,1,0],
+  ].flatten.collect { |e| MapData[e][0] }
+  map = Map.new(4,3,data)
+  route = Route.new(map,2,2)
+  route.search(6)
+  # Print
+    puts('passmap:')
+    prints(map)
+    puts('movmap:')
+    prints(route.movmap)
+    puts('waymap:')
+    prints(route.waymap)
+
+  #---------------------------------
+  # Test 5
+  # Test Speed.
+  #---------------------------------
+  puts("\nTest 5:")
+  x, y = 1500, 1500
+  route = Route.new(Map.new(x,y,1),*[250,250])
+  puts Chill.test { route.search(500) }
+  puts route.getPoints.size
+end
+=end
+
+=begin
+map = SRPG::Map.new(10,10,1)
+route = SRPG::Route.new(map,5,5)
+route.search(3)
+SRPG.prints(route.movmap)
+route.points_each { |x,y| print [x,y],',' }
+=end
+
+
+#module SRPG
+  #s = SettlerList.new
+  #s.push(Settler.new.setType(:Enemy).setID(1))
+  #s.push(Settler.new.setType(:Actor).setID(2))
+  #s.push(Settler.new.setType(:Actor).setID(3))
+  #puts(s)
+  #s.next
+  #puts(s)
+#end
+#end
+
+=begin
+string = "
+set M : MatchMap {
+
+Map (
+0 1 0
+1 2 1
+0 1 0
+0 P 0
+)
+
+P(0)    // P
+dir(1)  // Dir
+dis(4)  // Dirs
+
+}
+"
+puts string
+
+
+SRPG::MatchMap.matchMap(string)
+=end
+#puts Chill.test { SRPG::Route.new(SRPG::Map.new(500,500,1),250,250).search(500) }
+#SRPG::Map.new(3,2,[0,1,2,3,4,5,6]).circumgyrate(:r).prints
+#SRPG::MatchMap.matchMap("Map(123\n456\n789)")[0].circumgyrate(:r).prints
+
+      #data[opposite(list.first.type)].first
+
+      #prr = -> do [a.to_s,e1.to_s,e2.to_s] end
+      #ss = -> do a.attack e1; e1.attack a; e2.attack a; prr.call; end
+      #ssn = -> do a.attack e2; e2.attack a; prr.call; end
+      #until a.dead? || e1.dead?
+      #  ss.call
+      #end
+      #p prr.call
+      #until a.dead? || e2.dead?
+      #  ssn.call
+      #end
+      #p prr.call
+# 00 01 02
+# 10 11 12
+
+# r
+# 10 00
+# 11 01
+# 12 02
+# rr
+# 12 02
+# 11 01
+# 10 00
+
+# d
+# 12 11 10
+# 02 01 00
+# dr
+# 10 11 12
+# 00 01 02
+
+# l
+# 02 12
+# 01 11
+# 00 10
+# lr
+# 00 10
+# 01 11
+# 02 12
+
+=begin
+●○
+┏━┯━┓
+┃ │ ┃
+┠─┼─┨
+┃ │ ┃
+┗━┷━┛
+┌─┬─┐
+│ │ │
+├─┼─┤
+│ │ │
+└─┴─┘
+
+puts('┌───┐')
+puts('│ A │')
+puts('├─┼─┤')
+puts('│ B │')
+puts('└─┴─┘')
+=end
+
+#@count = Hash.new
+#@type = nil
+#putError("Type is Not Same.") if (!@type.nil? && (settler.type != @type))
+#id = settler.id
+#@count[id] = (@count[id] || 0) + 1
+#putError("Settler ID is Repeated.") if ((id != 0) && (@count[id] > 1))
+#@type = settler.type
+
+    def reset
+      each_all { |x,y,e| e.setPost(x,y) }
+    end
+    def clean
+      each_all { |x,y,e| clear(x,y) if ((e.x != x) || (e.y != y) || (e.map != self)) }
+    end
+    def clear!(x, y)
+      get(x,y).clear
+    end
+      #string = "a << attack e1"
+      #p a.class.instance_methods(false).include?(:attack)
+      #p Battler.instance_methods(false)
+=begin
+module SRPG
+  #-------------------------------------------------
+  # Class Settler
+  #-------------------------------------------------
+  class Settler
+    include Direction
+    include Flag
+    # Reader
+    attr_reader :id, :type, :data
+    def initialize(type = Bland, id = 0, data = nil)
+      @id   = id
+      @data = data
+      @type = flag_get(type)
+    end
+
+    # Method
+    def bland?; @type == Bland                end
+    def clear;  initialize                    end
+    def to_s;   "#{flag_name(@type)}(#{@id})" end
+  end
+
+
+
+  # MovePoint, AttackPoint
+  #-------------------------------------------------
+  # Class SettlerMap
+  #-------------------------------------------------
+  class SettlerMap < Map
+    def initialize(x, y)
+      super(x,y)
+      set_with_index { |x,y| SettlerWithMap.new(x,y) }
+    end
+    def move(fx, fy, tx, ty)
+      return if (judgeError(fx,fy) || judgeError(tx,ty))
+      return putWarning("Move Self to Self(#{tx}, #{ty}).") if ((fx == tx) && (fy == ty))
+      return putError("There is Not Bland.") if (!get(tx,ty).bland?)
+      swap(fx, fy, tx, ty)
+      get(tx,ty).setPost(tx,ty)
+      get(fx,fy).setPost(fx,fy)
+      self
+    end
+
+  private
+    class SettlerWithMap < Settler
+      attr_reader :x, :y
+      def initialize(x, y, *args)
+        @x, @y = x, y
+        super(*args)
+      end
+      def setPost(x, y)
+        @x, @y = x, y
+      end
+    end
+  end
+end
+
+p SRPG::SettlerMap.new(5,5)
+=end
+#def setID(id);     @id    = id;             self end
+#def setType(type); @type  = flag_get(type); self end
+#def setData(data); @data  = data;           self end
+
+
+=begin
+ruby元编程 那些书里没有的知识 define_method
+
+你有多少种方式创建一个方法？大多数人想到的可能是def 关键字
+#普通方法
+def tele_you
+    puts "I am Anleb"
+end
+#普通方法
+def tele_you
+    puts "I am Anleb"
+end
+
+
+#定义单件方法
+n="Anleb"
+def n.tell_you
+    puts "I am #{self}"
+end
+n.tell_you
+#定义单件方法
+n="Anleb"
+def n.tell_you
+    puts "I am #{self}"
+end
+n.tell_you
+
+
+
+#define_method
+class Project
+    define_method :tell_you do |name|
+        puts name
+    end
+end
+
+a=Project.new
+a.tell_you("Anleb")
+#define_method
+class Project
+    define_method :tell_you do |name|
+        puts name
+    end
+end
+
+a=Project.new
+a.tell_you("Anleb")
+
+
+
+具体分析下：define_method方法
+Kernel.private_methods.include?("define_method")  #true
+Kernel.private_methods.include?("define_method")  #true
+
+可以看到define_method是一个私有方法，那么私有方法调用是有规定的：
+1.不能有显式调用，也就是不能有接受者，不能self.define_method这样调用
+2.私有方法是可以被继承的
+3.私有方法可以被send强制调用，如：send(:private_method)
+4.只能在自身中调用私有方法（体会下这句话的意思）
+
+上面Project类中，当前self是类Project，然后隐式调用define_method方法建立方法
+
+
+define_methods动态创建方法，什么是动态创建呢，就是代码运行时就创建定义了方法，利用动态创建和动态派发可以实现ruby的代码重构，这是魔法！
+例子元编程书上有，中文版 46页，英文版69页
+
+看一个例子：
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+end
+
+class Project2 < Project1
+
+end
+
+a=Project2.new
+a.tell_you("Anleb")
+Project1.instance_methods(false) #["tell_you"]
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+end
+
+class Project2 < Project1
+
+end
+
+a=Project2.new
+a.tell_you("Anleb")
+Project1.instance_methods(false) #["tell_you"]
+
+
+1.说明define_method定义的方法和def定义没区别，都可以被继承
+2.define_method的方法是存在于类中的实例方法
+
+
+修改代码：
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def creat_method
+        define_method :new_method do
+            puts "this is a new method"
+        end
+    end
+end
+Project1.new.creat_method
+
+
+Error:test.rb:7:in `creat_method': undefined method `define_method' for #<Project1:0x2bc7008> (NoMethodError)
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def creat_method
+        define_method :new_method do
+            puts "this is a new method"
+        end
+    end
+end
+Project1.new.creat_method
+
+
+Error:test.rb:7:in `creat_method': undefined method `define_method' for #<Project1:0x2bc7008> (NoMethodError)
+
+
+一拍脑袋，额，忘记说了，define_method是Object Class方法，也就是只有类才可以调用，
+creat_method的当前self肯定是一个对象啊，对象不是类，所以不能调用，修改代码
+
+def creat_method
+       self.class.define_method :new_method do
+           puts "this is a new method"
+       end
+   end
+ def creat_method
+        self.class.define_method :new_method do
+            puts "this is a new method"
+        end
+    end
+
+
+调用方法：
+Project1.new.creat_method
+Error:test.rb:7:in `creat_method': private method `define_method' called for Project1:Class (NoMethodError)
+Project1.new.creat_method
+Error:test.rb:7:in `creat_method': private method `define_method' called for Project1:Class (NoMethodError)
+
+
+崩溃了，怎么还不行，看看提示，说这是一个私有方法，额。。。忘记了，private方法不能显式有接受者，我们想到一个办法，对，那就是send方法
+
+修改代码：
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def creat_method
+        self.class.send(:define_method,:new_method) do
+            puts "this is a new method"
+        end
+    end
+end
+
+a=Project1.new
+p Project1.instance_methods(false) #["creat_method", "tell_you"]
+a.creat_method
+p Project1.instance_methods(false) #["creat_method", "tell_you"]
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def creat_method
+        self.class.send(:define_method,:new_method) do
+            puts "this is a new method"
+        end
+    end
+end
+
+a=Project1.new
+p Project1.instance_methods(false) #["creat_method", "tell_you"]
+a.creat_method
+p Project1.instance_methods(false) #["creat_method", "tell_you"]
+
+
+终于成功了，这种技术叫做 动态派发技术，常用在Method_messing方法。
+
+解法2：
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def self.creat_method
+        define_method :new_method do  #当前self是类，所以可以调用，并且隐式
+            puts "this is a new method"
+        end
+    end
+    creat_method
+end
+
+Project1.new.new_method
+class Project1
+    define_method :tell_you do |name|
+        puts name
+    end
+
+    def self.creat_method
+        define_method :new_method do  #当前self是类，所以可以调用，并且隐式
+            puts "this is a new method"
+        end
+    end
+    creat_method
+end
+
+Project1.new.new_method
+
+
+
+解法3：
+class Project1
+    class << self
+        def creat_method
+        define_method :new_method do  #当前self是类
+            puts "this is a new method"
+        end
+    end
+    end
+    creat_method
+end
+
+Project1.new.new_method
+class Project1
+    class << self
+        def creat_method
+        define_method :new_method do  #当前self是类
+            puts "this is a new method"
+        end
+    end
+    end
+    creat_method
+end
+
+Project1.new.new_method
+=end
