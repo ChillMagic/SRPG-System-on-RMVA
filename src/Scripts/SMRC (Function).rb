@@ -76,6 +76,7 @@ private
     out?(x,y)
   end
   def judgeError(x, y)
+    putError("The Parameter (#{x},#{y}) is Wrong.",x.nil?||y.nil?)
     putError("Point in Map (#{x},#{y}) is Out.",judgeOut(x,y))
   end
 end

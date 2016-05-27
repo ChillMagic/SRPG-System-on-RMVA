@@ -42,8 +42,8 @@
       <file leaf-file-name="BaseItem.rb" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/BaseItem.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-76">
-              <caret line="17" column="9" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+            <state relative-caret-position="143">
+              <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
               <folding />
             </state>
           </provider>
@@ -52,8 +52,8 @@
       <file leaf-file-name="Battler.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Battler.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="574">
-              <caret line="50" column="16" selection-start-line="50" selection-start-column="16" selection-end-line="50" selection-end-column="16" />
+            <state relative-caret-position="988">
+              <caret line="52" column="33" selection-start-line="52" selection-start-column="33" selection-end-line="52" selection-end-column="33" />
               <folding />
             </state>
           </provider>
@@ -62,9 +62,11 @@
       <file leaf-file-name="Battle.rb" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Battle.rb">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="323">
-              <caret line="19" column="7" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
-              <folding />
+            <state relative-caret-position="494">
+              <caret line="26" column="7" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
+              <folding>
+                <marker date="1463765321632" expanded="true" signature="616:709" ph="##..." />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -87,8 +89,8 @@
     <setting file="file://$PROJECT_DIR$/BattleEvent/1.Command.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/SpriteBasic.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/BattleEvent/TEMP.rb" root0="SKIP_INSPECTION" />
-    <setting file="file://$PROJECT_DIR$/Battle.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/BattleEvent/6.Menu.rb" root0="SKIP_INSPECTION" />
+    <setting file="file://$PROJECT_DIR$/Battle.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/BattleEvent/5.Data.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/Data.rb" root0="SKIP_INSPECTION" />
     <setting file="file://$PROJECT_DIR$/main.rb" root0="SKIP_INSPECTION" />
@@ -208,6 +210,8 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -228,8 +232,6 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -414,13 +416,13 @@
       <workItem from="1463655487882" duration="875000" />
       <workItem from="1463668903069" duration="2679000" />
       <workItem from="1463764950081" duration="389000" />
-      <workItem from="1463906884067" duration="89000" />
-      <workItem from="1464253717034" duration="299000" />
+      <workItem from="1463895238808" duration="71000" />
+      <workItem from="1463895379152" duration="729000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="23873000" />
+    <option name="totallyTimeSpent" value="24285000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -473,14 +475,6 @@
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Battle.rb">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="26" column="7" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/main.rb">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -736,7 +730,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/SMRC (Function).rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="19">
           <caret line="96" column="24" selection-start-line="96" selection-start-column="24" selection-end-line="96" selection-end-column="24" />
         </state>
       </provider>
@@ -757,21 +751,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Data.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="437">
           <caret line="80" column="35" selection-start-line="80" selection-start-column="35" selection-end-line="80" selection-end-column="35" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/BattleEvent/TEMP.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="574">
           <caret line="149" column="28" selection-start-line="149" selection-start-column="28" selection-end-line="149" selection-end-column="28" />
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/{Kernel}.rb" />
     <entry file="file://$PROJECT_DIR$/SMRC (Ver5.2.0).rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
+        <state relative-caret-position="361">
           <caret line="97" column="40" selection-start-line="97" selection-start-column="40" selection-end-line="97" selection-end-column="40" />
         </state>
       </provider>
@@ -804,26 +799,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Battle.rb">
+    <entry file="file://$PROJECT_DIR$/Battler.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="323">
-          <caret line="19" column="7" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
+        <state relative-caret-position="988">
+          <caret line="52" column="33" selection-start-line="52" selection-start-column="33" selection-end-line="52" selection-end-column="33" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Battler.rb">
+    <entry file="file://$PROJECT_DIR$/Battle.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="574">
-          <caret line="50" column="16" selection-start-line="50" selection-start-column="16" selection-end-line="50" selection-end-column="16" />
-          <folding />
+        <state relative-caret-position="494">
+          <caret line="26" column="7" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
+          <folding>
+            <marker date="1463765321632" expanded="true" signature="616:709" ph="##..." />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/BaseItem.rb">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-76">
-          <caret line="17" column="9" selection-start-line="17" selection-start-column="9" selection-end-line="17" selection-end-column="9" />
+        <state relative-caret-position="143">
+          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
           <folding />
         </state>
       </provider>

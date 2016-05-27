@@ -25,34 +25,27 @@ module SRPG
   #     @status.clear
   #   end
   # end
-  # #--------------------------------
-  # # * Class Equip
-  # #--------------------------------
-  # class Equip
-  #   def initialize
-  #   end
-  #   #------------------------------
-  #   # * Plus
-  #   #------------------------------
-  #   def plus(type)
-  #     case type
-  #     when :mhp
-  #     when :mmp
-  #     when :atk
-  #     when :def
-  #     when :mat
-  #     when :mdf
-  #     when :agi
-  #     when :luk
-  #     end
-  #   end
-  #   #------------------------------
-  #   # * Rate
-  #   #------------------------------
-  #   def rate
-  #   end
-  #   def get_plused_value(value, type)
-  #
-  #   end
-  # end
+
+  #--------------------------------
+  # * Class Data::Skill
+  #--------------------------------
+  class Data::Skill
+    attr_reader :id
+    def initialize(id)
+    end
+  end
 end
+# Graphics.frame_rate = 30
+
+
+
+
+
+
+
+
+
+
+
+
+

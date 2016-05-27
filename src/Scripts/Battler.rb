@@ -6,7 +6,7 @@
 
 module SRPG
   #--------------------------------
-  # * Module Data::Battler
+  # * Class Data::Battler
   #--------------------------------
   class Data::Battler
     attr_reader :id, :type, :datype, :data
@@ -45,21 +45,26 @@ module SRPG
     def dead?
       self.hp <= 0
     end
-    def damage_evaluate(type, battler, item = nil)
+    def damage_evaluate(action, object)
+      type = action.type
+      # TODO
+      item = nil
+      # item = get_XXXXXX(type,id)
+      object.each { |battler| damage_evaluate_basic(type, battler, item) }
+    end
+    def damage_evaluate_basic(type, battler, item = nil)
       result = AI::DamageEvaluate.new(0, 0)
-      return putError("The Battler had been dead.") if dead?
+      return putError('The Battler had been dead.') if dead?
       case type
-        when :attack
-          result.damage = AI.max(self.atk - battler.def, 0)
+      when :attack
+        damage = Data::Attack.get_damage(self,battler)
+        result.damage = AI.max(damage, 0)
         # result.add_status = 0 # TODO
-        when :skill
-          # TODO
-          # item.get_damage(self, battle)
-        when :item
-          # TODO
-          # item.get_damage(self, battle)
-        when :status
-          # TODO
+      when :recover
+        # TODO
+        # item.get_damage(self, battle)
+      when :status
+        # TODO
       end
       return result
     end

@@ -1,4 +1,34 @@
-﻿# module SRPG
+﻿  # #--------------------------------
+  # # * Class Equip
+  # #--------------------------------
+  # class Equip
+  #   def initialize
+  #   end
+  #   #------------------------------
+  #   # * Plus
+  #   #------------------------------
+  #   def plus(type)
+  #     case type
+  #     when :mhp
+  #     when :mmp
+  #     when :atk
+  #     when :def
+  #     when :mat
+  #     when :mdf
+  #     when :agi
+  #     when :luk
+  #     end
+  #   end
+  #   #------------------------------
+  #   # * Rate
+  #   #------------------------------
+  #   def rate
+  #   end
+  #   def get_plused_value(value, type)
+  #
+  #   end
+  # end
+# module SRPG
 #   class Battler
 #     include Data::Battler
 #     attr_accessor *BattleData

@@ -14,7 +14,7 @@ module SRPG
       puts("> Loading...")
       printOn
       @binding = bind ? bind : run
-        @map = map
+      @map = map
     end
     # Run
     def run

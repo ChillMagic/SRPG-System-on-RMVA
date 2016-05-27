@@ -4,8 +4,6 @@
 # Update : 12/17/2015
 #=================================================
 
-import 'MatchMap'
-
 module SRPG
   #-----------------------------------------------
   # Range : Class for Range
@@ -213,7 +211,7 @@ module SRPG
     end
     # Match Map Data
     def self.match_map(string, count_p = 1)
-      map, px, py = SRPG::MatchMap.matchMap(string,count_p)
+      map, px, py = SRPG::Data::MatchMap.matchMap(string,count_p)
       map_to_range(map, -px, -py) { |x, y| yield(x,y) }
     end
     #-----------------------------------------------

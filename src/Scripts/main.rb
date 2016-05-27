@@ -3,9 +3,9 @@ alias import require_relative
 import 'System'
 import 'Basic'
 import 'Map'
+import 'Data'
 import 'Range'
 import 'Setter'
-import 'Data'
 import 'Action'
 import 'AI'
 import 'Battle'
@@ -33,12 +33,13 @@ module SRPG
   end
 end
 
+SRPG_KERNEL_VERSION = '0.9.0.2'
+SRPG_KERNEL_LOADED  = true
+
 puts("====================================")
 puts("* SRPG on Map System Kernel (SMSK)")
 puts("* By Chill")
-puts("* Version 1.0.0.0")
+puts("* Version #{SRPG_KERNEL_VERSION}")
 puts("====================================")
-
-SRPG_KERNEL_LOADED = true
 
 Chill.test {}

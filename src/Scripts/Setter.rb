@@ -130,6 +130,9 @@ module SRPG
     def first
       @data.first[1]
     end
+    def data
+      @data.values
+    end
     def delete(id)
       # TODO : Will Be Deleted
       putError("Not Found Setter ID(#{id}).") if (@data[id].nil?)
