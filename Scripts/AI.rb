@@ -29,6 +29,21 @@ module SRPG
     end
 
     #------------------------------
+    # + Function
+    #------------------------------
+    def self.make_skill_damage(user, target, variables, string)
+      a = user
+      b = target
+      v = variables
+      begin
+        eval(string)
+      rescue Exception => res
+        putError("Calculator Error in #{self.class}(#{string}) " +
+                     "for #{a.class}(#{a.id}), #{b.class}(#{b.id}).\n>  " + res.to_s)
+      end
+    end
+
+    #------------------------------
     # + Evaluate
     #------------------------------
     # Single conflict

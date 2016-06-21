@@ -1,9 +1,7 @@
 *.exe
+*.dll
 
 ## src
 /src/System
-/src/Scripts/.idea
-
-/Backtrace.txt
 /Game.rvproj2
 /src/Scripts/comment.txt

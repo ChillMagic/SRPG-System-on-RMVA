@@ -84,5 +84,22 @@ module SRPG
         RangeData.new(optional,elected)
       end
     end
+    #--------------------------------
+    # * Structs
+    #--------------------------------
+    SelectAction = Struct.new(:type, :id)
+    SelectObject = Array
+    #--------------------------------
+    # * Damage
+    #--------------------------------
+    Damage = Struct.new(:type, :element_id, :formula, :variance, :critical) do
+      def initialize(damage)
+        self.type       = damage.type
+        self.element_id = damage.element_id
+        self.formula    = damage.formula
+        self.variance   = damage.variance
+        self.critical   = damage.critical
+      end
+    end
   end
 end
