@@ -1,3 +1,5 @@
+*.exe
+
 ## src
 /src/System
 /src/Scripts/.idea
