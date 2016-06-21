@@ -55,10 +55,10 @@ module Test
   b = Battler.new(10,0,2)
   v = Array.new(500,0)
   string = "a.atk * 4 - b.def * 2"
-  p SRPG::AI.make_skill_damage(a, b, v, string)
+  #p SRPG::AI.make_skill_damage(a, b, v, string)
   module SRPG
     module Data
-      Attack = BaseItem.new
+      # Attack = BaseItem.new
     end
   end
 end

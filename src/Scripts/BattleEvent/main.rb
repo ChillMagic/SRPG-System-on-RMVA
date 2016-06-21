@@ -1,13 +1,16 @@
-alias old_import import
-def import(arg)
-  old_import('BattleEvent/'+arg)
-end
-
-import '1.Command'
-import '2.Event'
-import '3.Calc'
-import '4.BattleEvent'
-import '5.Data'
-import '6.Menu'
-
-alias import old_import
+import 'BattleEvent/133 - SRPGData'
+import 'BattleEvent/134 - SRPGBattle(Basic)'
+import 'BattleEvent/135 - SRPGBattle(Init)'
+import 'BattleEvent/136 - SRPGBattle(Update)'
+import 'BattleEvent/137 - SRPGBattle(Command)'
+import 'BattleEvent/138 - SRPGBattle(Enemy)'
+import 'BattleEvent/139 - SRPGBattle(Support)'
+import 'BattleEvent/140 - SRPGBattle(Event)'
+import 'BattleEvent/141 - SRPGBattleEvent'
+import 'BattleEvent/142 - SRPGBattleData'
+import 'BattleEvent/143 - SRPGBattleData(Range)'
+import 'BattleEvent/144 - SRPGBattleData(Calc)'
+import 'BattleEvent/145 - SRPGBattleProcess'
+import 'BattleEvent/146 - Windows_SRPGMap(Function)'
+import 'BattleEvent/147 - Spriteset_SRPGMap(Function)'
+import 'BattleEvent/148 - SRPGBattle(Command)'
