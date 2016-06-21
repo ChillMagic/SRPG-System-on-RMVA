@@ -23,19 +23,17 @@ module SRPG
   #--------------------------------
   SelectAction = Struct.new(:type, :id)
   SelectObject = Array
-  DamageData = Struct.new(:type, :id, :damage)
+
 
   module BattleDamage
     def self.get_damage(b1, b2, kind)
       # DamageData
-      #b1.atk - b2.def
     end
-    def damage_evaluate_basic(type, battler, item = nil)
+    def self.damage_evaluate_basic(type, battlers, item = nil)
       result = AI::DamageEvaluate.new(0, 0)
-      return putError('The Battler had been dead.') if dead?
       case type
       when :attack
-        damage = Data::Attack.get_damage(self,battler)
+        damage = Data::Attack.get_damage(*battlers)
         result.damage = AI.max(damage, 0)
         # result.add_status = 0 # TODO
       when :recover
@@ -49,17 +47,21 @@ module SRPG
   end
 end
 
-module Test
-  Battler = Struct.new(:atk, :def, :mat, :mdf, :agi, :luk, :mhp, :mmp, :hp, :mp, :tp, :level)
-  a = Battler.new(5,6,1)
-  b = Battler.new(10,0,2)
-  v = Array.new(500,0)
-  string = "a.atk * 4 - b.def * 2"
-  #p SRPG::AI.make_skill_damage(a, b, v, string)
-  module SRPG
-    module Data
-      # Attack = BaseItem.new
+module SRPG
+  module Data
+    Damage = Struct.new(:type, :element_id, :formula, :variance, :critical)
+    module BaseItem
+      def self.set_variables(variables)
+        @@variables = variables
+      end
+      def self.get_attack_damage(b1, b2)
+        get_damage_formula(b1, b2, "a.atk - b.def")
+      end
+      def self.get_damage_formula(a, b, formula)
+        SRPG::AI.make_skill_damage(a, b, @@variables, formula)
+      end
     end
+    Attack = BaseItem
   end
 end
 

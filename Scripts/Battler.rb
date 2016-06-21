@@ -53,20 +53,8 @@ module SRPG
       object.each { |battler| damage_evaluate_basic(type, battler, item) }
     end
     def damage_evaluate_basic(type, battler, item = nil)
-      result = AI::DamageEvaluate.new(0, 0)
       return putError('The Battler had been dead.') if dead?
-      case type
-      when :attack
-        damage = Data::Attack.get_damage(self,battler)
-        result.damage = AI.max(damage, 0)
-        # result.add_status = 0 # TODO
-      when :recover
-        # TODO
-        # item.get_damage(self, battle)
-      when :status
-        # TODO
-      end
-      return result
+      return BattleDamage.damage_evaluate_basic(type, [self, battler], item)
     end
     def set_damage(damage)
       self.hp -= AI.min(damage, self.hp)
