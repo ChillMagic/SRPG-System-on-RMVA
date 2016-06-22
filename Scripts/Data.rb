@@ -85,7 +85,7 @@ module SRPG
       end
     end
     #--------------------------------
-    # * Structs
+    # * Select
     #--------------------------------
     SelectAction = Struct.new(:type, :id)
     SelectObject = Array

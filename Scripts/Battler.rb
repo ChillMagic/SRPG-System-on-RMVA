@@ -54,7 +54,7 @@ module SRPG
     end
     def damage_evaluate_basic(type, battler, item = nil)
       return putError('The Battler had been dead.') if dead?
-      return BattleDamage.damage_evaluate_basic(type, [self, battler], item)
+      return BattleDamage.damage_evaluate(type, self, battler, item)
     end
     def set_damage(damage)
       self.hp -= AI.min(damage, self.hp)

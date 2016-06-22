@@ -70,5 +70,8 @@ module SRPG
     def self.max(*args)
       args.max
     end
+    def self.rand(a, b)
+      a + Kernel.rand(b - a + 1)
+    end
   end
 end
