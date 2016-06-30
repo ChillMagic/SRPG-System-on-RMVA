@@ -6,41 +6,61 @@
 
 module SRPG
   module DataManager
-    # + Struct
-    class DataList < Struct.new(:class, :data)
-      def get(id)
-        self.class.new(self.data[id])
-      end
-    end
-    class DataLists < Hash
-      def add(key, type, value)
-        self[key]  = DataList.new(type, value)
-      end
-    end
     # + Initialize
     #  Use it when start game.
-    # input : { key: data, ... }
-    def self.init(dataLists)
-      @@database = dataLists
+    #  input : DataLists
+    def self.init(datalists)
+      @database = datalists
     end
     # + Get
     def self.get(key, id = nil)
-      id.nil? ? get_list(key).data : get_data(key, id)
+      @database.get(key,id)
     end
-    # + Get List
-    #  output : DataList
-    def self.get_list(key)
-      @@database[key]
+    def self.get_data(key)
+      @database.get_data(key)
     end
-    # + Get List Type
-    #  output : class<T>
-    def self.get_list_class(key)
-      @@database[key].class
+  end
+  module DataManager
+    # + Struct
+    class DataList < Struct.new(:class, :data)
+      include Enumerable
+      def get(id)
+        new(self.data[id])
+      end
+      def each
+        self.data.each { |ele| yield(new(ele)) }
+      end
+      def check_collect
+        collect { |dat| dat.have_nil? ? nil : yield(dat) }
+      end
+
+      private
+      def new(ele)
+        self.class.new(ele)
+      end
+      def []; end
     end
-    # + Get Data
-    #  output : T
-    def self.get_data(key, id)
-      @@database[key].get(id)
+    class FuncCall
+      include Reference
+      def data
+        @data.call
+      end
+    end
+    class DataLists < Hash
+      # + Add
+      def add(key, type, value)
+        self[key] = DataList.new(type, value)
+      end
+      def add_func(key, func)
+        self[key] = FuncCall.new(func)
+      end
+      # + Get
+      def get(key, id = nil)
+        id.nil? ? self[key] : self[key].get(id)
+      end
+      def get_data(key)
+        self[key].data
+      end
     end
   end
 end

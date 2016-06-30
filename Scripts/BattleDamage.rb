@@ -6,22 +6,9 @@
 
 module SRPG
   module BattleDamage
-    # Init
-    #  input:
-    #    damagelist: Array(Data::Damage)
-    #    damagedata: Data::Damage
-    def self.set_damagelist(damagelist)
-      @@damagelist = damagelist
-    end
-    def self.get_damagelist
-      return @@damagelist
-    end
-    def self.set_variables(variables)
-      @@variables = variables
-    end
     # Get Damage
     def self.get_damage_basic(a, b, damagedata)
-      basdam = SRPG::AI.make_skill_damage(a, b, @@variables, damagedata.formula)
+      basdam = SRPG::AI.make_skill_damage(a, b, DataManager.get_data(:variables), damagedata.formula)
       vardam = damagedata.variance
       return basdam + basdam * AI.rand(-vardam, vardam) / 100
     end
@@ -33,10 +20,10 @@ module SRPG
       end
     end
     def self.get_skill_damage(b1, b2, id)
-      get_damage_basic(b1, b2, @@damagelist[:skill][id])
+      get_damage_basic(b1, b2, DataManager.get(:skill,id).damage)
     end
     def self.get_item_damage(b1, b2, id)
-      get_damage_basic(b1, b2, @@damagelist[:item][id])
+      get_damage_basic(b1, b2, DataManager.get(:item,id).damage)
     end
     # Damage Evaluate
     def self.damage_evaluate(type, b1, b2, item = nil)

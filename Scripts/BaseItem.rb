@@ -55,9 +55,17 @@ module SRPG
       end
     end
     #--------------------------------
+    # * BaseData
+    #--------------------------------
+    class BaseData < ReferClass
+      def have_nil?
+        @data.nil?
+      end
+    end
+    #--------------------------------
     # * BaseItem
     #--------------------------------
-    class BaseItem < ReferClass
+    class BaseItem < BaseData
       attr_reference :id
       def damage; Damage.new(@data.damage); end
       def range; UseableRange.new(0,0); end
@@ -67,11 +75,14 @@ module SRPG
     #--------------------------------
     class Skill < BaseItem; end
     class Item < BaseItem; end
+
     class Actor < Battler; end
     class Enemy < Battler; end
-    class Equip < ReferClass; end
+
+    class Equip < BaseData; end
     class Weapon < Equip; end
     class Armor < Equip; end
-    class State < ReferClass; end
+
+    class State < BaseData; end
   end
 end

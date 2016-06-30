@@ -106,6 +106,7 @@ class SRPG::Battle
         break
       end
     end
+    update_call_debug
     update_position
     refresh_skill_top
   end
@@ -122,5 +123,8 @@ class SRPG::Battle
     else
       refresh_mapstatus(curr_post, !curr_post.blank?)
     end
+  end
+  def update_call_debug
+    SceneManager.call(Scene_Debug) if $TEST && Input.press?(:F9)
   end
 end
