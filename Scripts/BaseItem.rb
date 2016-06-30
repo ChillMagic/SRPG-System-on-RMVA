@@ -55,14 +55,6 @@ module SRPG
       end
     end
     #--------------------------------
-    # * BaseData
-    #--------------------------------
-    class BaseData < ReferClass
-      def have_nil?
-        @data.nil?
-      end
-    end
-    #--------------------------------
     # * BaseItem
     #--------------------------------
     class BaseItem < BaseData

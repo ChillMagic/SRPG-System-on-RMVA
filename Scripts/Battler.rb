@@ -8,27 +8,36 @@ module SRPG
   #--------------------------------
   # * Class Data::Battler
   #--------------------------------
-  class Data::Battler
-    # Data
-    attr_reader :id, :type, :datype, :data
-    # Basic
-    attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
-    # Variable
-    attr_referenceref :hp, :mp, :tp
-    # Other
-    attr_reference :level, :move, :view, :note
-    # Initialize
-    def initialize(id, type, datype, data)
-      @id     = id
-      @type   = type
-      @datype = datype
-      @data   = data
+  module Data
+    class Battler < BaseData
+      # Data
+      attr_reader :id, :type, :datype, :data
+      # Basic
+      attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
+      # Variable
+      attr_referenceref :hp, :mp, :tp
+      # Other
+      attr_reference :level, :move, :view
+      # Method
+      def init(id, type, datype, data)
+        @id     = id
+        @type   = type
+        @datype = datype
+        @data   = data
+      end
+      def note
+        Data::Note.new(@data.note)
+      end
     end
   end
   #--------------------------------
   # * Class Battler
   #--------------------------------
   class Battler < Data::Battler
+    # Initialize
+    def initialize(id, type, datype, data)
+      init(id, type, datype, data)
+    end
     def dead?
       self.hp <= 0
     end

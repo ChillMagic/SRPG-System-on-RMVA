@@ -172,12 +172,7 @@ module SRPG::Data
       SpeType[:obstacle].any? { |e| name =~ e }
     end
     def self.get_note(type, battler)
-      case type
-      when :actor
-        Note.new($data_actors[battler.id].note)
-      when :enemy
-        Note.new($data_enemies[battler.id].note)
-      end
+      SRPG::DataManager.get(type,battler.id).note
     end
   end
   
