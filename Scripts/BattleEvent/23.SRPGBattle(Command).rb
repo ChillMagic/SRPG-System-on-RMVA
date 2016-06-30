@@ -336,7 +336,7 @@ class SRPG::Battle
   #-------------
   def event_skill_check(setter, skill_id = 1)
     #battles.can_skill?(active_post,setter,skill_id)
-    true
+    #return true
     range = battles.get_range(:se,curr_post)
     battles.check_range_of(range,:enemy)
   end

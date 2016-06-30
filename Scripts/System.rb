@@ -96,6 +96,28 @@ class Module
   def get_constexpr(symbol)
     module_eval(symbol.to_s.humanize)
   end
+  def attr_reference(*symbols)
+    symbols.each { |sym| module_eval("def #{sym}; @data.#{sym}; end") }
+  end
+  def attr_referenceset(*symbols)
+    symbols.each { |sym| module_eval("def #{sym}=(e); @data.#{sym}=(e); end") }
+  end
+  def attr_referenceref(*symbols)
+    symbols.each { |sym| module_eval("def #{sym}; @data.#{sym}; end; def #{sym}=(e); @data.#{sym}=(e); end") }
+  end
 end
-
+class Struct
+  def assign_with_struct(struct)
+    self.members.each { |sym| eval("self.#{sym} = struct.#{sym}") }
+    return self
+  end
+end
+module Reference
+  def initialize(data)
+    @data = data
+  end
+end
+class ReferClass
+  include Reference
+end
 module SRPG end

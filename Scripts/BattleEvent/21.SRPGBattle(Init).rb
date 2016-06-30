@@ -36,13 +36,6 @@ class SRPG::Battle
   end
 
   def init_data
-    # Init BattleDamage
-    if (BattleDamage.get_damagelist.empty?)
-      damagelist = BattleDamage.get_damagelist
-      damagelist[:item]  = $data_items.collect  { |dat| Data::Damage.new(dat.damage) unless dat.nil? }
-      damagelist[:skill] = $data_skills.collect { |dat| Data::Damage.new(dat.damage) unless dat.nil? }
-      BattleDamage.set_damagelist(damagelist)
-    end
   end
   
   def init_windows

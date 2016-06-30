@@ -229,6 +229,16 @@ module SRPG
       return data
     end
     #-------------------------
+    # * Get BaseItem Data
+    #-------------------------
+    # TODO
+    # description :
+    # input : skill_id
+    # ouput : Data::Skill
+    def get_skill(id)
+
+    end
+    #-------------------------
     # * Get ShowData
     #-------------------------
     def get_attack_animation(setter, target)

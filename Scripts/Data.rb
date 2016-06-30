@@ -43,63 +43,10 @@ module SRPG
         return [map, px, py]
       end
     end
-    #------------------------------
-    # + UseableRange
-    #------------------------------
-    class UseableRange
-      # Attr
-      attr_reader :atktype, :rantype, :ranges
-      # Const
-      EffectType = [
-          :self,  # Self
-          :enemy, # Enemy
-          :party, # Party
-      ]
-      RangeType  = [
-          :none,  # None
-          :self,  # Self
-          :indiv, # Individual
-          :range, # Range
-      ]
-      RangeData = Struct.new(:optional,:elected)
-      # Initialize
-      def initialize(efftype, rantype, *ranges)
-        @efftype, @rantype = efftype, rantype
-        @ranges = get_ranges(type,ranges)
-      end
-      # Function
-      def get_ranges(type, ranges)
-        putError("Not find type(#{type}) in UseableRange.") unless (RangeType.include?(type))
-        case type
-        when :self
-          optional = Range.range(0)
-          elected  = Range.range(0)
-        when :indiv
-          optional = ranges.first
-          elected  = Range.range(0)
-        when :range
-          optional = Range.range(0)
-          elected  = ranges.last
-        end
-        RangeData.new(optional,elected)
-      end
-    end
     #--------------------------------
     # * Select
     #--------------------------------
     SelectAction = Struct.new(:type, :id)
     SelectObject = Array
-    #--------------------------------
-    # * Damage
-    #--------------------------------
-    Damage = Struct.new(:type, :element_id, :formula, :variance, :critical) do
-      def initialize(damage)
-        self.type       = damage.type
-        self.element_id = damage.element_id
-        self.formula    = damage.formula
-        self.variance   = damage.variance
-        self.critical   = damage.critical
-      end
-    end
   end
 end
