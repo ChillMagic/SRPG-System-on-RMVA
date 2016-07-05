@@ -28,7 +28,13 @@ module SRPG::Data
       Data::Attack.new(attack_range)
     end
     def get_skill_data(id = nil)
-      id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, @skills[id])
+      id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, id)#@skills[id])
+    end
+    def skill_optional_range(id)
+      get_skill_data(id).optional_range
+    end
+    def skill_elected_range(id)
+      get_skill_data(id).elected_range
     end
     #--------------
     # + Old
@@ -69,6 +75,33 @@ module SRPG::Data
       end
     end
     def refresh
+    end
+  end
+  class Attack
+    def initialize(attack_range)
+      @attack_range = attack_range
+    end
+    def optional_range
+      @attack_range
+    end
+    def elected_range
+      SRPG::Range.new([[0,0]])
+    end
+  end
+  class Skill
+    def optional_range
+      self.note.get_range(:Opt)
+    end
+    def elected_range
+      self.note.get_range(:Elt)
+    end
+  end
+  class Item
+    def optional_range
+      self.note.get_range(:Opt)
+    end
+    def elected_range
+      self.note.get_range(:Elt)
     end
   end
   

@@ -79,24 +79,17 @@ module SRPG
     #--------------------------------
     class BaseItem < BaseData
       attr_reference :id
+      def note; Note.new(@data.note); end
+      def optional_range; end
+      def elected_range;  end
       def damage; Damage.new(@data.damage); end
-      def range(r1, r2); UseableRange.new(r1,r2); end
+      def range(cp, tp); UseableRange.new(optional_range.move(*cp),elected_range.move(*tp)); end
     end
     #--------------------------------
     # * Others
     #--------------------------------
     # TODO
-    class Attack < BaseItem
-      def initialize(attack_range)
-        @attack_range = attack_range
-      end
-      def range(curr_post = [0,0], targ_post = [0,0])
-        opt_range = @attack_range.move(*curr_post)
-        # TODO
-        elt_range = SRPG::Range.new([[*targ_post]])
-        return super(opt_range,elt_range)
-      end
-    end
+    class Attack < BaseItem; end
     class Skill < BaseItem; end
     class Item < BaseItem; end
 

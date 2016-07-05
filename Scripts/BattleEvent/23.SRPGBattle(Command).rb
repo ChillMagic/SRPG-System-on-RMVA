@@ -249,13 +249,14 @@ class SRPG::Battle
         goto(:doing)
       end
     when :attack
-      result = event_attack_check(curr_post)
+      result = battles.can_attack?(active_post,curr_post)
       if (result)
         damage_status_show
         goto(:select_confirm)
       end
     when :skill
-      result = event_skill_check(curr_post)
+      # TODO
+      result = battles.can_use_skill?(active_post,curr_post,5)
       if (result)
         @select_skill = false
         hide_range
@@ -274,7 +275,7 @@ class SRPG::Battle
       goto(:doing)
     when :skill
       hide_range
-      event_skill_start(curr_post)
+      event_skill_start(curr_post,5)
       goto(:doing)
     end
   end
@@ -322,9 +323,6 @@ class SRPG::Battle
     end
   end
   #-------------------------
-  def event_attack_check(setter)
-    battles.can_attack?(active_post,setter)
-  end
   def event_attack_start(setter)
     # TODO
     event.attack(active_post,setter)
@@ -334,18 +332,15 @@ class SRPG::Battle
     damage_status_hide
   end
   #-------------
-  def event_skill_check(setter, skill_id = 1)
-    #battles.can_skill?(active_post,setter,skill_id)
-    #return true
-    range = battles.get_range(:se,curr_post)
-    battles.check_range_of(range,:enemy)
-  end
   def event_skill_start(setter, skill_id = 1)
     # TODO
-    range = battles.get_range(:se,curr_post)
-    setters = battles.get_object_of_skill(range,:enemy)
-    p setters
-    setters.each { |setter| event.attack(active_post,setter) }
+    p __method__
+    event_attack_start(setter)
+    # p active_post
+    # range = battles.get_range(:se,active_post)
+    # setters = battles.get_object_of_skill(range,:enemy)
+    # p setters
+    # setters.each { |setter| event.attack(active_post,setter) }
     #event.skill(active_post,setter, skill_id)
   end
   def event_skill_over

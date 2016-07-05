@@ -30,8 +30,7 @@ module SRPG
         # TODO
         return 
       when :so  # Skill Optional Basic
-        # TODO
-        return SRPG::Range.ranges(5)
+        return setter.data.skill_optional_range(5)
       when :som # Skill Optional Moved
         return get_range(:so,setter).move(*setter.position)
       when :soa # Skill Optional All
@@ -39,8 +38,10 @@ module SRPG
         srange = get_range(:so,setter)
         return AI.get_attack_range(mrange,srange)
       when :se  # Skill Elected
-        # TODO
-        return SRPG::Range.ranges(2).move(*setter.position)
+        # TODO : ID
+        id = 5
+        range = DataManager.get(:skill,id).elected_range
+        return range.move(*setter.position)
       end
     end
     def get_range_of_setter(type = nil)
@@ -51,8 +52,8 @@ module SRPG
         end
       end
     end
-    def check_range_of(range, type)
-      range.any? { |x,y| @map[x,y].type == type if (@map[x,y]) }
+    def check_range_of(range, *types)
+      range.any? { |x,y| types.include?(@map[x,y].type) if (@map[x,y]) }
     end
     def get_object_of_skill(range, type)
       range.select { |x,y| @map[x,y] && @map[x,y].type == type }.collect { |x,y| @map[x,y] }

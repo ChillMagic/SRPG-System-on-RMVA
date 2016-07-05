@@ -23,10 +23,12 @@ module SRPG
         baseitem = initiator.data.get_attack_data
         func = lambda { |x, y| can_damage?(initiator, @map[x,y]) }
       when :skill
-        baseitem = initiator.data.get_skill_data
-        func = lambda { |x, y| f(initiator, @map[x,y]) }
+        id = data
+        baseitem = initiator.data.get_skill_data(id)
+        func = lambda { |x, y| can_damage?(initiator, @map[x,y]) } # 'can_damage?'
       when :item
-        baseitem = initiator.data.get_item_data
+        id = data
+        baseitem = initiator.data.get_item_data(id)
         func = lambda { |x, y| f(initiator, @map[x,y]) }
       else
         return putError("Not find Action(#{type}).")
