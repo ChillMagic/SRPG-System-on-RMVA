@@ -28,15 +28,6 @@ module SRPG
       @passmap = Data::MapData.get_passmap
       start
     end
-    def get_actors
-      @datalist[:actor].collect { |b| b.data.data }
-    end
-    def get_enemies
-      @datalist[:enemy].collect { |b| b.data.data }
-    end
-    def get_battlers
-      @datalist.collect { |b| b.data.data }
-    end
     #-------------------------
     # * Start
     #-------------------------
@@ -155,45 +146,23 @@ module SRPG
       moveto = get_setter(x,y)
       return (range.include?(x,y) && (moveto.blank? || (setter == moveto)))
     end
-    def can_attack?(setter, target, allrange = false)
-      range = get_range(allrange ? :aoa : :aom,setter)
-      x, y  = target.position
-      condition = Battle.can_attack_self?
-      condition = condition ? is_battler?(target) : is_enemy?(setter,target)
-      return range.include?(x,y) && condition
+    def can_damage?(setter, target)
+      return Battle.can_attack_self? ? is_battler?(target) : is_enemy?(setter,target)
     end
     def can_attack?(setter, target, allrange = false)
-      range = get_range(allrange ? :aoa : :aom,setter)
-      x, y  = target.position
-      condition = Battle.can_attack_self?
-      condition = condition ? is_battler?(target) : is_enemy?(setter,target)
-      return range.include?(x,y) && condition
-    end
-    def can_use_skill?(setter, target, skill)
-      if (skill_id == 0)
-        return can_attack?(setter,target)
+      if (allrange)
+        return false unless can_damage?(setter, target)
+        range = get_range(:aoa, setter)
+        return range.include?(*target.position)
       else
-        # TODO
-        return 
+        return check_action(Data::SelectAction.new(:attack,setter,target))
       end
     end
-    def can_use_item?(setter, target, item)
-      if (skill_id == 0)
-        return can_attack?(setter,target)
-      else
-        # TODO
-        return 
-      end
+    def can_use_skill?(setter, target, skill_id)
+      return check_action(Data::SelectAction.new(:skill,setter,target,skill_id))
     end
-    def can_action?(setter, target, type, item = nil)
-      case type
-      when :attack
-        can_attack?(setter,target)
-      when :skill
-        can_use_skill?(setter,target,item)
-      when :item
-        can_use_item?(setter,target,item)
-      end
+    def can_use_item?(setter, target, item_id)
+      return check_action(Data::SelectAction.new(:item,setter,target,item_id))
     end
     def can_move_attack?(setter, x, y)
       return false unless ShowMoveAttack

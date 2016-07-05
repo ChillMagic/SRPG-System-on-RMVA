@@ -1,13 +1,12 @@
 #=================================================
 # SRPG::Battle
 #-------------------------------------------------
-# Update : 12/03/2015
+# Update : 07/05/2016
 #=================================================
 
-=begin
-  SRPG::Data::Battler -> SRPG::Battler
-=end
-
-# TODO : SRPG::Battler, the basic class of battlers.
 module SRPG
+  module Data
+    class AttackBasic < Struct.new(:range, :damage, :condition)
+    end
+  end
 end

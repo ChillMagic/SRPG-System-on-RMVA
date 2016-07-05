@@ -21,6 +21,18 @@ module SRPG::Data
   # TODO
   class Battler
     include SRPG
+    #--------------
+    # + New
+    #--------------
+    def get_attack_data
+      Data::Attack.new(attack_range)
+    end
+    def get_skill_data(id = nil)
+      id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, @skills[id])
+    end
+    #--------------
+    # + Old
+    #--------------
     def attack_range
       # TODO
       # p  weapons.collect { |w| Data::Note.new(w.note).get_range(:Attack) }

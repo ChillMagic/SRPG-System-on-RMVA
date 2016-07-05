@@ -14,8 +14,6 @@ module SRPG
       attr_reader :id, :type, :datype, :data
       # Basic
       attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
-      # Variable
-      attr_referenceref :hp, :mp, :tp
       # Other
       attr_reference :level, :move, :view
       # Method
@@ -34,6 +32,8 @@ module SRPG
   # * Class Battler
   #--------------------------------
   class Battler < Data::Battler
+    # Variable
+    attr_referenceref :hp, :mp, :tp
     # Initialize
     def initialize(id, type, datype, data)
       init(id, type, datype, data)

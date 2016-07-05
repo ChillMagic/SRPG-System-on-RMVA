@@ -21,8 +21,8 @@ class SRPG::Battle
     @battles = BattleData.new
     @event   = BattleEvent.new(self)
     @process = BattleProcess.new(self)
-    # Init Data
-    init_data
+    # Test
+    test
     # Start
     start
   end
@@ -34,10 +34,10 @@ class SRPG::Battle
     update_position
     turnto(:battle_start)
   end
-
-  def init_data
+  def test
+    # battles.get_actors
   end
-  
+
   def init_windows
     @windows.init_windows
     set_handlers
