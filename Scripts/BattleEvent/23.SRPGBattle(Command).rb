@@ -69,19 +69,18 @@ class SRPG::Battle
       return :forbid
     # Select Object
     when :select_object
-      type = @select_object_type
-      event_show_range_real(type)
+      event_show_range_real
       if (input?(:C))
-        event_do_check(type)
+        event_do_check
         # return :forbid
       elsif (input?(:B))
-        event_hide_range_real(type)
+        event_hide_range_real
         # return :forbid
       end
     # Select Confirm
     when :select_confirm
       if (!AttackAfterOK || input?(:C))
-        event_do_confirm(@select_object_type)
+        event_do_confirm
       elsif (input?(:B))
         damage_status_hide
         # hide_range
@@ -91,23 +90,29 @@ class SRPG::Battle
     # Doing
     when :doing
       return :forbid if (event.doing?)
-      event_do_over(@select_object_type)
+      event_do_over
     #------------------------------------
     # Select Move
     when :select_move
-      @select_object_type = :move
+      actions.set_action(:move, active_post)
+      p actions.get_action
       goto(:select_object)
     # Select Attack
     when :select_attack
-      @select_object_type = :attack
+      actions.set_action(:attack, active_post)
+      p actions.get_action
       goto(:select_object)
     # Select Skill
     when :select_skill
-      @select_object_type = :skill
+      actions.set_action(:skill, active_post)
+      actions.set_data(5)
+      p actions.get_action
       goto(:select_object)
     # Select Item
     when :select_item
-      @select_object_type = :item
+      actions.set_action(:item, active_post)
+      actions.set_data(5)
+      p actions.get_action
       goto(:select_object)
     #------------------------------------
     # Select Wait Direction
@@ -205,8 +210,8 @@ class SRPG::Battle
   #-----------------------------
   # ! Event Set !
   #-----------------------------
-  def event_show_range_real(flag)
-    case flag
+  def event_show_range_real
+    case actions.get_type
     when :move
       show_range(active_post,:move)
     when :attack
@@ -218,8 +223,8 @@ class SRPG::Battle
       adjust_direction
     end
   end
-  def event_hide_range_real(flag)
-    case flag
+  def event_hide_range_real
+    case actions.get_type
     when :move
       hide_range(true)
       goto(ShowMoveFirst ? :select : :select_action)
@@ -240,8 +245,9 @@ class SRPG::Battle
       goto(:select_action)
     end
   end
-  def event_do_check(flag)
-    case flag
+  def event_do_check
+    actions.set_target(curr_post)
+    case actions.get_type
     when :move
       result = event_move_start(*curr_post.position)
       if (result)
@@ -249,14 +255,13 @@ class SRPG::Battle
         goto(:doing)
       end
     when :attack
-      result = battles.can_attack?(active_post,curr_post)
+      result = battles.check_action(actions.get_action)
       if (result)
         damage_status_show
         goto(:select_confirm)
       end
     when :skill
-      # TODO
-      result = battles.can_use_skill?(active_post,curr_post,5)
+      result = battles.check_action(actions.get_action)
       if (result)
         @select_skill = false
         hide_range
@@ -266,28 +271,33 @@ class SRPG::Battle
       end
     end
   end
-  def event_do_confirm(flag)
-    case flag
-    when :move
+  def event_do_start
+    # TODO
+    case actions.get_type
     when :attack
-      hide_range
-      event_attack_start(curr_post)
-      goto(:doing)
+      event.attack(active_post,curr_post)
     when :skill
+      event.attack(active_post,curr_post)
+    end
+  end
+  def event_do_confirm
+    case actions.get_type
+    when :move
+    when :attack, :skill
       hide_range
-      event_skill_start(curr_post,5)
+      event_do_start
       goto(:doing)
     end
   end
-  def event_do_over(flag)
-    case flag
+  def event_do_over
+    case actions.get_type
     when :move
       goto(get_record(:move_attack) ? :select_attack : :select_action)
     when :attack
-      event_attack_over
+      damage_status_hide
       goto(:select_action)
     when :skill
-      event_skill_over
+      damage_status_hide
       goto(:select_action)
     end
   end
@@ -321,31 +331,6 @@ class SRPG::Battle
       active_post.moveTo(x,y)
       active_event.moveto(x,y)
     end
-  end
-  #-------------------------
-  def event_attack_start(setter)
-    # TODO
-    event.attack(active_post,setter)
-  end
-  def event_attack_over
-    # TODO
-    damage_status_hide
-  end
-  #-------------
-  def event_skill_start(setter, skill_id = 1)
-    # TODO
-    p __method__
-    event_attack_start(setter)
-    # p active_post
-    # range = battles.get_range(:se,active_post)
-    # setters = battles.get_object_of_skill(range,:enemy)
-    # p setters
-    # setters.each { |setter| event.attack(active_post,setter) }
-    #event.skill(active_post,setter, skill_id)
-  end
-  def event_skill_over
-    # TODO
-    damage_status_hide
   end
   #-----------------------------
   # ! Event Set !

@@ -149,20 +149,14 @@ module SRPG
     def can_damage?(setter, target)
       return Battle.can_attack_self? ? is_battler?(target) : is_enemy?(setter,target)
     end
-    def can_attack?(setter, target, allrange = false)
+    def can_attack?(setter, target, allrange)
       if (allrange)
         return false unless can_damage?(setter, target)
         range = get_range(:aoa, setter)
         return range.include?(*target.position)
       else
-        return check_action(Data::SelectAction.new(:attack,setter,target))
+        return putError("The function '#{__method__}' will be delete.")
       end
-    end
-    def can_use_skill?(setter, target, skill_id)
-      return check_action(Data::SelectAction.new(:skill,setter,target,skill_id))
-    end
-    def can_use_item?(setter, target, item_id)
-      return check_action(Data::SelectAction.new(:item,setter,target,item_id))
     end
     def can_move_attack?(setter, x, y)
       return false unless ShowMoveAttack

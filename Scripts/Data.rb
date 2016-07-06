@@ -44,9 +44,24 @@ module SRPG
       end
     end
     #--------------------------------
-    # * Select
+    # + SelectAction
     #--------------------------------
-    SelectAction = Struct.new(:type, :initiator, :target, :data)
-    SelectObject = Array
+    # Struct
+    class SelectAction
+      # Attr
+      attr_reader :type, :initiator, :target, :data
+      # Initialize
+      def initialize(type, initiator)
+        @type = type
+        @initiator = initiator
+      end
+      # Set
+      def set_target(target)
+        @target = target
+      end
+      def set_data(data)
+        @data = data
+      end
+    end
   end
 end

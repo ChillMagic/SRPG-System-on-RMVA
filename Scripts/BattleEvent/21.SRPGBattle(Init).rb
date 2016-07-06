@@ -6,7 +6,7 @@
 
 class SRPG::Battle
   # Attr
-  attr_reader :sprites, :windows, :battles  # Import
+  attr_reader :sprites, :windows, :battles, :actions  # Import
   attr_reader :event
   # Include
   include SRPG
@@ -19,6 +19,7 @@ class SRPG::Battle
     @sprites = Spriteset_SRPGMap.new
     @windows = Windows_SRPGMap.new
     @battles = BattleData.new
+    @actions = BattleAction.new(self)
     @event   = BattleEvent.new(self)
     @process = BattleProcess.new(self)
     # Test
