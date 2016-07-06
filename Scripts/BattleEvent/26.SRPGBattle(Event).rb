@@ -78,9 +78,9 @@ class SRPG::Battle
   #-----------------------------
   # * Show/Hide Range
   #-----------------------------
-  def show_range(setter, type, new = false)
+  def show_range(setter, type)
     intype = battles.get_intype(setter,type)
-    event.show_range(setter,intype,new)
+    event.show_range(setter,intype)
   end
   def show_ranges(*datas)
     event.show_ranges(*datas)

@@ -9,7 +9,7 @@ module SRPG
   # * BattleAction
   #--------------------------------
   class BattleAction
-
+    include Config
     #------------------------------
     # + Basic
     #------------------------------
@@ -18,21 +18,11 @@ module SRPG
       @imports = imports
     end
     # Import
-    def battles
-      @imports.battles
-    end
-    def event
-      @imports.event
-    end
-    def active_post
-      @imports.active_post
-    end
-    def curr_post
-      @imports.curr_post
-    end
-    def get_record(flag)
-      @imports.instance_eval{get_record(flag)}
-    end
+    def battles;          @imports.battles;     end
+    def event;            @imports.event;       end
+    def active_post;      @imports.active_post; end
+    def curr_post;        @imports.curr_post;   end
+    def get_record(flag); @imports.instance_eval{get_record(flag)}; end
     # Set
     def set_action(type, initiator)
       @data = Data::SelectAction.new(type,initiator)
@@ -53,7 +43,6 @@ module SRPG
     def get_type
       @data ? @data.type : nil
     end
-
     #------------------------------
     # + Method
     #------------------------------
@@ -74,7 +63,7 @@ module SRPG
       case get_type
       when :move
         @imports.hide_range(true)
-        @imports.goto(Battle::ShowMoveFirst ? :select : :select_action)
+        @imports.goto(ShowMoveFirst ? :select : :select_action)
       when :attack
         @imports.active_event.set_direction(get_record(:attk_direction))
         if (get_record(:move_attack))
@@ -98,6 +87,7 @@ module SRPG
     end
     def do_check
       set_target(curr_post)
+      result = false
       case get_type
       when :move
         result = @imports.event_move_start(*curr_post.position)
@@ -120,6 +110,7 @@ module SRPG
           @imports.goto(:select_confirm)
         end
       end
+      return result
     end
     def do_start
       case get_type

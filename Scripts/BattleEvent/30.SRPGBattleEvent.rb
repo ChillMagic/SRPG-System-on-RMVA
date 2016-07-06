@@ -57,20 +57,15 @@ module SRPG
     end
     #---------------------
     # Show Range
-    def show_range(setter, type, new = false)
-      return if (!new && @show_range)
+    def show_range(setter, type)
       show_range_basic(setter, type)
-      @show_range = true
     end
     def show_ranges(*datas)
-      return if (@show_range)
       datas.each { |dat| show_range_basic(*dat,false) }
       sprites.ranges.show
-      @show_range = true
     end
     def hide_range
       sprites.hide_range
-      @show_range = false
     end
     def refresh_range_top(setter, type)
       sprites.ranges.pop

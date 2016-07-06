@@ -67,16 +67,17 @@ class SRPG::Battle
         end
       end
       return :forbid
-    # Select Object
+    # Select Object Begin
     when :select_object
       actions.show_range
+      goto(:select_object_update)
+    # Select Object Update
+    when :select_object_update
       actions.update_range
       if (input?(:C))
         actions.do_check
-        # return :forbid
       elsif (input?(:B))
         actions.hide_range
-        # return :forbid
       end
     # Select Confirm
     when :select_confirm
@@ -96,24 +97,20 @@ class SRPG::Battle
     # Select Move
     when :select_move
       actions.set_action(:move, active_post)
-      p actions.get_action
       goto(:select_object)
     # Select Attack
     when :select_attack
       actions.set_action(:attack, active_post)
-      p actions.get_action
       goto(:select_object)
     # Select Skill
     when :select_skill
       actions.set_action(:skill, active_post)
       actions.set_data(5)
-      p actions.get_action
       goto(:select_object)
     # Select Item
     when :select_item
       actions.set_action(:item, active_post)
       actions.set_data(5)
-      p actions.get_action
       goto(:select_object)
     #------------------------------------
     # Select Wait Direction
