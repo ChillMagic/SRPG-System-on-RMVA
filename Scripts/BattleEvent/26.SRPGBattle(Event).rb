@@ -105,4 +105,10 @@ class SRPG::Battle
     dir = battles.attack_direction(active_post, curr_post, dir)
     active_event.set_direction(dir)
   end
+  def record_direction
+    set_record(:attk_direction, active_event.direction)
+  end
+  def recover_direction
+    active_event.set_direction(get_record(:attk_direction))
+  end
 end

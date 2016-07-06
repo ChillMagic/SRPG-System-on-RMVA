@@ -53,10 +53,8 @@ module SRPG
         @imports.show_range(active_post,:move)
       when :attack
         @imports.show_range(active_post,:attack_opt)
-        @imports.adjust_direction
       when :skill
         @imports.show_ranges([active_post,:skill_opt],[curr_post,:skill_elt])
-        @imports.adjust_direction
       end
     end
     def hide_range
@@ -65,24 +63,31 @@ module SRPG
         @imports.hide_range(true)
         @imports.goto(ShowMoveFirst ? :select : :select_action)
       when :attack
-        @imports.active_event.set_direction(get_record(:attk_direction))
         if (get_record(:move_attack))
           @imports.event_move_recover
           @imports.hide_range
           @imports.goto(:select_move)
         else
           @imports.hide_range(true)
+          @imports.recover_direction
           @imports.goto(:select_action)
         end
-      when :skill
+      when :skill, :item
         @imports.hide_range(true)
+        @imports.recover_direction
         @imports.goto(:select_action)
       end
     end
     def update_range
       case get_type
+      when :move
+      when :attack
+        @imports.adjust_direction
       when :skill
+        @imports.adjust_direction
         event.refresh_range_top(curr_post, :skill_elt)
+      when :item
+        @imports.adjust_direction
       end
     end
     def do_check
@@ -95,13 +100,7 @@ module SRPG
           @imports.hide_range
           @imports.goto(:doing)
         end
-      when :attack
-        result = battles.check_action(get_action)
-        if (result)
-          @imports.damage_status_show
-          @imports.goto(:select_confirm)
-        end
-      when :skill
+      when :attack, :skill, :item
         result = battles.check_action(get_action)
         if (result)
           @imports.hide_range
@@ -123,7 +122,7 @@ module SRPG
     def do_confirm
       case get_type
       when :move
-      when :attack, :skill
+      when :attack, :skill, :item
         @imports.hide_range
         do_start
         @imports.goto(:doing)

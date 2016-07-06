@@ -52,6 +52,15 @@ module SRPG
       # ! Action List Sort !
       return [setter.data.agi, setter.data.level]
     end
+    def get_actors
+      @datalist[:actor].collect { |b| b.data.data }
+    end
+    def get_enemies
+      @datalist[:enemy].collect { |b| b.data.data }
+    end
+    def get_battlers
+      @datalist.collect { |b| b.data.data }
+    end
     
     #-------------------------
     # * Command

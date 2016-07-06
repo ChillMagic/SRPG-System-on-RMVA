@@ -163,12 +163,14 @@ class SRPG::Battle
   def command_attack
     hide_menu
     change_record(:move_attack, false)
-    set_record(:attk_direction, active_event.direction)
+    record_cursor
+    record_direction
     goto(:select_attack)
   end
   def command_skill
     hide_menu
     record_cursor
+    record_direction
     goto(:select_skill)
   end
   def command_item
@@ -219,7 +221,7 @@ class SRPG::Battle
       change_record(:move_attack,true)
       set_record(:move_position,  active_post.position)
       set_record(:move_direction, active_event.direction)
-      set_record(:attk_direction, active_event.direction)
+      record_direction
       return event_move_start_basic(active_post,*point)
     end
     return false
