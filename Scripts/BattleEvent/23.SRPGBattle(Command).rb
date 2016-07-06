@@ -69,18 +69,19 @@ class SRPG::Battle
       return :forbid
     # Select Object
     when :select_object
-      event_show_range_real
+      actions.show_range
+      actions.update_range
       if (input?(:C))
-        event_do_check
+        actions.do_check
         # return :forbid
       elsif (input?(:B))
-        event_hide_range_real
+        actions.hide_range
         # return :forbid
       end
     # Select Confirm
     when :select_confirm
       if (!AttackAfterOK || input?(:C))
-        event_do_confirm
+        actions.do_confirm
       elsif (input?(:B))
         damage_status_hide
         # hide_range
@@ -90,7 +91,7 @@ class SRPG::Battle
     # Doing
     when :doing
       return :forbid if (event.doing?)
-      event_do_over
+      actions.do_over
     #------------------------------------
     # Select Move
     when :select_move
@@ -210,98 +211,6 @@ class SRPG::Battle
   #-----------------------------
   # ! Event Set !
   #-----------------------------
-  def event_show_range_real
-    case actions.get_type
-    when :move
-      show_range(active_post,:move)
-    when :attack
-      show_range(active_post,:attack_opt)
-      adjust_direction
-    when :skill
-      @select_skill = true
-      show_ranges([active_post,:skill_opt],[curr_post,:skill_elt])
-      adjust_direction
-    end
-  end
-  def event_hide_range_real
-    case actions.get_type
-    when :move
-      hide_range(true)
-      goto(ShowMoveFirst ? :select : :select_action)
-    when :attack
-      active_event.set_direction(get_record(:attk_direction))
-      if (get_record(:move_attack))
-        event_move_recover
-        hide_range
-        goto(:select_move)
-      else
-        hide_range(true)
-        goto(:select_action)
-      end
-    when :skill
-      # TODO
-      @select_skill = false
-      hide_range(true)
-      goto(:select_action)
-    end
-  end
-  def event_do_check
-    actions.set_target(curr_post)
-    case actions.get_type
-    when :move
-      result = event_move_start(*curr_post.position)
-      if (result)
-        hide_range
-        goto(:doing)
-      end
-    when :attack
-      result = battles.check_action(actions.get_action)
-      if (result)
-        damage_status_show
-        goto(:select_confirm)
-      end
-    when :skill
-      result = battles.check_action(actions.get_action)
-      if (result)
-        @select_skill = false
-        hide_range
-        damage_status_show
-        decord_cursor
-        goto(:select_confirm)
-      end
-    end
-  end
-  def event_do_start
-    # TODO
-    case actions.get_type
-    when :attack
-      event.attack(active_post,curr_post)
-    when :skill
-      event.attack(active_post,curr_post)
-    end
-  end
-  def event_do_confirm
-    case actions.get_type
-    when :move
-    when :attack, :skill
-      hide_range
-      event_do_start
-      goto(:doing)
-    end
-  end
-  def event_do_over
-    case actions.get_type
-    when :move
-      goto(get_record(:move_attack) ? :select_attack : :select_action)
-    when :attack
-      damage_status_hide
-      goto(:select_action)
-    when :skill
-      damage_status_hide
-      goto(:select_action)
-    end
-  end
-  #-------------------------
   # From ActivePost to a setter.
   def event_move_start(x, y)
     if (event_move_start_basic(active_post,x,y))

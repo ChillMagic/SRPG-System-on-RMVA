@@ -89,10 +89,7 @@ class SRPG::Battle
     event.hide_range
     event.move_cursor(active_post) if (move_cursor)
   end
-  def refresh_skill_top
-    event.refresh_range_top(curr_post, :skill_elt) if @select_skill
-  end
-  
+
   #-----------------------------
   # * Adjust
   #-----------------------------

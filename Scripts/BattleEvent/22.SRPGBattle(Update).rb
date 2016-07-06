@@ -108,7 +108,6 @@ class SRPG::Battle
     end
     update_call_debug
     update_position
-    refresh_skill_top
   end
   def update_position
     @x, @y = $game_player.x, $game_player.y
