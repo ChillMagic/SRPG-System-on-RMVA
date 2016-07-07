@@ -18,11 +18,13 @@ module SRPG
       @imports = imports
     end
     # Import
-    def battles;          @imports.battles;     end
-    def event;            @imports.event;       end
-    def active_post;      @imports.active_post; end
-    def curr_post;        @imports.curr_post;   end
-    def get_record(flag); @imports.instance_eval{get_record(flag)}; end
+    def battles;              @imports.battles;     end
+    def event;                @imports.event;       end
+    def active_post;          @imports.active_post; end
+    def curr_post;            @imports.curr_post;   end
+    def get_record(*args);    @imports.instance_eval{get_record(*args)};    end
+    def set_record(*args);    @imports.instance_eval{set_record(*args)};    end
+    def change_record(*args); @imports.instance_eval{change_record(*args)}; end
     # Set
     def set_action(type, initiator)
       @data = Data::SelectAction.new(type,initiator)
@@ -43,11 +45,19 @@ module SRPG
     def get_type
       @data ? @data.type : nil
     end
+    def get_initiator
+      @data ? @data.initiator : nil
+    end
+    def get_target
+      @data ? @data.target : nil
+    end
+    def get_data
+      @data ? @data.data : nil
+    end
     #------------------------------
     # + Method
     #------------------------------
     def show_range
-      # show_range
       case get_type
       when :move
         @imports.show_range(active_post,:move)
@@ -64,7 +74,7 @@ module SRPG
         @imports.goto(ShowMoveFirst ? :select : :select_action)
       when :attack
         if (get_record(:move_attack))
-          @imports.event_move_recover
+          move_recover
           @imports.hide_range
           @imports.goto(:select_move)
         else
@@ -92,40 +102,31 @@ module SRPG
     end
     def do_check
       set_target(curr_post)
-      result = false
-      case get_type
-      when :move
-        result = @imports.event_move_start(*curr_post.position)
-        if (result)
-          @imports.hide_range
-          @imports.goto(:doing)
-        end
-      when :attack, :skill, :item
-        result = battles.check_action(get_action)
-        if (result)
-          @imports.hide_range
-          @imports.damage_status_show
-          @imports.decord_cursor
-          @imports.goto(:select_confirm)
-        end
-      end
-      return result
+      p get_action
+      return battles.check_action(get_action)
     end
     def do_start
+      @imports.hide_range
       case get_type
+      when :move
+      when :attack, :skill, :item
+        @imports.damage_status_show
+        @imports.decord_cursor
+      end
+      do_things
+    end
+    def do_cancel
+      @imports.damage_status_hide
+      # hide_range
+    end
+    def do_things
+      case get_type
+      when :move
+        move_start(*curr_post.position)
       when :attack
         event.attack(active_post,curr_post)
       when :skill
         event.attack(active_post,curr_post)
-      end
-    end
-    def do_confirm
-      case get_type
-      when :move
-      when :attack, :skill, :item
-        @imports.hide_range
-        do_start
-        @imports.goto(:doing)
       end
     end
     def do_over
@@ -140,6 +141,36 @@ module SRPG
         @imports.goto(:select_action)
       end
       clear_action
+    end
+  end
+  # From ActivePost to a setter.
+  def move_start(x, y)
+    if (move_start_basic(active_post,x,y))
+      change_record(:move_attack,false)
+      set_record(:move_position,  active_post.position)
+      set_record(:move_direction, @imports.active_event.direction)
+      return true
+    elsif (point = battles.can_move_attack?(active_post,x,y))
+      change_record(:move_attack,true)
+      set_record(:move_position,  active_post.position)
+      set_record(:move_direction, @imports.active_event.direction)
+      @imports.record_direction
+      return move_start_basic(active_post,*point)
+    end
+    return false
+  end
+  def move_start_basic(setter, x, y)
+    return false unless (battles.can_move?(setter,x,y))
+    event.move(setter,x,y) if (battles.get_setter(x,y).blank?)
+    return true
+  end
+  def move_recover
+    active_post.status.unmove
+    x, y = get_record(:move_position)
+    if (active_post.position != [x, y])
+      @imports.active_event.set_direction(get_record(:move_direction))
+      active_post.moveTo(x,y)
+      @imports.active_event.moveto(x,y)
     end
   end
 end

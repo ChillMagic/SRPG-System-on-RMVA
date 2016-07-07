@@ -30,7 +30,8 @@ module SRPG
         # TODO
         return 
       when :so  # Skill Optional Basic
-        return setter.data.skill_optional_range(5)
+        id = 5
+        return DataManager.get(:skill,id).optional_range
       when :som # Skill Optional Moved
         return get_range(:so,setter).move(*setter.position)
       when :soa # Skill Optional All

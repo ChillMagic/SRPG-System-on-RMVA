@@ -13,12 +13,14 @@ module SRPG
     # Check
     #  action : SelectAction
     def check_action(action)
-      p action
       type = action.type
       initiator = action.initiator
       target = action.target
       data = action.data
       case type
+      when :move
+        args = [action.initiator, *action.target.position]
+        return can_move?(*args) || can_move_attack?(*args)
       when :attack
         baseitem = initiator.data.get_attack_data
         func = lambda { |x, y| can_damage?(initiator, @map[x,y]) }
@@ -40,6 +42,15 @@ module SRPG
       return false unless useable_range.check_in(x, y)
       return false unless useable_range.check_each { |x, y| func.call(x,y) }
       return true
+    end
+    def get_range_from_action(action)
+      case get_type
+      when :move
+        return UseableRange.new(battles.get_range(:m, action.get_initiator), nil)
+      when :attack
+        action.get_initiator.data.get_attack_data.range(action.get_initiator, action.get_target)
+      when :skill
+      end
     end
   end
 end

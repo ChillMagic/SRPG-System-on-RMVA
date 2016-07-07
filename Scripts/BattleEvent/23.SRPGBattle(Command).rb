@@ -60,7 +60,7 @@ class SRPG::Battle
       if (input?(:B))
         hide_menu
         if (active_status.can_unmove?)
-          event_move_recover
+          actions.move_recover ## TODO
           goto(:select_move)
         else
           goto(:select)
@@ -75,17 +75,17 @@ class SRPG::Battle
     when :select_object_update
       actions.update_range
       if (input?(:C))
-        actions.do_check
+        goto(:select_confirm) if actions.do_check
       elsif (input?(:B))
         actions.hide_range
       end
     # Select Confirm
     when :select_confirm
       if (!AttackAfterOK || input?(:C))
-        actions.do_confirm
+        actions.do_start
+        goto(:doing)
       elsif (input?(:B))
-        damage_status_hide
-        # hide_range
+        actions.do_cancel
         goto(:select_object)
       end
       return :forbid
@@ -153,9 +153,8 @@ class SRPG::Battle
     return :default
   end
 
-  #-----------------------------
-  # ! Command Set !
-  #-----------------------------
+  # Command Set
+
   def command_move
     hide_menu
     goto(:select_move)
@@ -203,44 +202,4 @@ class SRPG::Battle
     @windows.show_confirm
     goto(:show_confirm)
   end
-  #-----------------------------
-  # ! Command Set !
-  #-----------------------------
-
-  #-----------------------------
-  # ! Event Set !
-  #-----------------------------
-  # From ActivePost to a setter.
-  def event_move_start(x, y)
-    if (event_move_start_basic(active_post,x,y))
-      change_record(:move_attack,false)
-      set_record(:move_position,  active_post.position)
-      set_record(:move_direction, active_event.direction)
-      return true
-    elsif (point = battles.can_move_attack?(active_post,x,y))
-      change_record(:move_attack,true)
-      set_record(:move_position,  active_post.position)
-      set_record(:move_direction, active_event.direction)
-      record_direction
-      return event_move_start_basic(active_post,*point)
-    end
-    return false
-  end
-  def event_move_start_basic(setter, x, y)
-    return false unless (battles.can_move?(setter,x,y))
-    event.move(setter,x,y) if (battles.get_setter(x,y).blank?)
-    return true
-  end
-  def event_move_recover
-    active_post.status.unmove
-    x, y = get_record(:move_position)
-    if (active_post.position != [x, y])
-      active_event.set_direction(get_record(:move_direction))
-      active_post.moveTo(x,y)
-      active_event.moveto(x,y)
-    end
-  end
-  #-----------------------------
-  # ! Event Set !
-  #-----------------------------
 end
