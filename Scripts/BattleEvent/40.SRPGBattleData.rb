@@ -28,6 +28,9 @@ module SRPG
       @passmap = Data::MapData.get_passmap
       start
     end
+    def set_actions(actions)
+      @actions = actions
+    end
     #-------------------------
     # * Start
     #-------------------------

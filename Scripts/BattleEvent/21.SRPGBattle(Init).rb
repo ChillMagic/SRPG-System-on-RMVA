@@ -22,6 +22,7 @@ class SRPG::Battle
     @actions = BattleAction.new(self)
     @event   = BattleEvent.new(self)
     @process = BattleProcess.new(self)
+    @battles.set_actions(@actions)
     # Test
     test
     # Start

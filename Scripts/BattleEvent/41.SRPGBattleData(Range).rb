@@ -30,7 +30,7 @@ module SRPG
         # TODO
         return 
       when :so  # Skill Optional Basic
-        id = 5
+        id = @actions.get_data
         return DataManager.get(:skill,id).optional_range
       when :som # Skill Optional Moved
         return get_range(:so,setter).move(*setter.position)
@@ -39,8 +39,7 @@ module SRPG
         srange = get_range(:so,setter)
         return AI.get_attack_range(mrange,srange)
       when :se  # Skill Elected
-        # TODO : ID
-        id = 5
+        id = @actions.get_data
         range = DataManager.get(:skill,id).elected_range
         return range.move(*setter.position)
       end
