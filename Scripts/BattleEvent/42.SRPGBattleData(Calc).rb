@@ -24,6 +24,18 @@ module SRPG
       b.set_damage(result.damage)
       return b.dead?
     end
+    def use_skill_real(id, setter, target, func)
+      skill = DataManager.get(:skill,id)
+      range = skill.elected_range.move(*target.position)
+      dead = []
+      range.each do |x, y|
+        tar = @map[x, y]
+        next if tar.data.nil?
+        func.call(tar)
+        dead.push(tar) if (attack(setter, tar))
+      end
+      dead
+    end
     #-------------------------
     # * Show
     #-------------------------

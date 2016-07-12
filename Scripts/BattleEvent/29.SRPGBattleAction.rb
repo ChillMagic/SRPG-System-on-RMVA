@@ -122,11 +122,11 @@ module SRPG
     def do_things
       case get_type
       when :move
-        move_start(*curr_post.position)
+        move_start
       when :attack
         event.attack(active_post,curr_post)
       when :skill
-        event.attack(active_post,curr_post)
+        event.skill(get_data,active_post,curr_post)
       end
     end
     def do_over
@@ -144,25 +144,12 @@ module SRPG
     end
   end
   # From ActivePost to a setter.
-  def move_start(x, y)
-    if (move_start_basic(active_post,x,y))
-      change_record(:move_attack,false)
-      set_record(:move_position,  active_post.position)
-      set_record(:move_direction, @imports.active_event.direction)
-      return true
-    elsif (point = battles.can_move_attack?(active_post,x,y))
-      change_record(:move_attack,true)
-      set_record(:move_position,  active_post.position)
-      set_record(:move_direction, @imports.active_event.direction)
-      @imports.record_direction
-      return move_start_basic(active_post,*point)
-    end
-    return false
-  end
-  def move_start_basic(setter, x, y)
-    return false unless (battles.can_move?(setter,x,y))
-    event.move(setter,x,y) if (battles.get_setter(x,y).blank?)
-    return true
+  def move_start
+    event.move(active_post, *get_data[1])
+    set_record(:move_position,  active_post.position)
+    set_record(:move_direction, @imports.active_event.direction)
+    change_record(:move_attack, get_data[0])
+    @imports.record_direction if (get_data[0])
   end
   def move_recover
     active_post.status.unmove

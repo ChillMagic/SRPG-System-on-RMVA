@@ -15,6 +15,8 @@ module SRPG
         move:   RankData.new(:move_start,   :moving,  :move_over),
         show:   RankData.new(:show_start,   :showing, :blank),
         attack: RankData.new(:attack_start, :over,    :attack_over),
+        skill:  RankData.new(:skill_start,  :over,    :skill_over),
+        item:   RankData.new(:item_start,   :over,    :item_over),
         wait:   RankData.new(:wait_start,   :waiting, :blank)
     }
     # Initialize
@@ -34,6 +36,9 @@ module SRPG
     end
     def attack(setter, target)
       attack_start(setter, target)
+    end
+    def skill(id, setter, target)
+      skill_start(id, setter, target)
     end
     def show_animation(setter, animation_id)
       show_start(setter, animation_id)
@@ -134,11 +139,7 @@ module SRPG
       show_animation(*battles.get_attack_animation(setter,target))
       set_direction(setter, target)
       if (battles.attack(setter,target))
-        # TODO : To show an animation for dead.
-        # event(target).erase
-        battles.push_dead_event(event(target))
-        event(target).transparent = true
-        target.clear
+        set_dead_setter(target)
       end
       move_cursor(target)
       return true
@@ -156,6 +157,28 @@ module SRPG
     def set_direction(cur_pos, tar_pos)
       ce = event(cur_pos)
       ce.set_direction(battles.attack_direction(cur_pos, tar_pos, ce.direction))
+    end
+    def skill_start(id, setter, target)
+      setflag(:skill)
+      set_record(:attk_setter,setter)
+      func = lambda { |target| show_animation(*battles.get_attack_animation(setter,target)) } # TODO
+      set_direction(setter, target)
+      battles.use_skill_real(id, setter,target,func).each do |dead_setter|
+        set_dead_setter(dead_setter)
+      end
+      move_cursor(target)
+      return true
+    end
+    def skill_over
+      setter = get_record(:attk_setter)
+      setter.status.action
+    end
+    def set_dead_setter(target)
+      # TODO : To show an animation for dead.
+      # event(target).erase
+      battles.push_dead_event(event(target))
+      event(target).transparent = true
+      target.clear
     end
     #--------
     # Show Animation

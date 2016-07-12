@@ -20,7 +20,14 @@ module SRPG
       case type
       when :move
         args = [action.initiator, *action.target.position]
-        return can_move?(*args) || can_move_attack?(*args)
+        if (can_move?(*args))
+          action.set_data([false,action.target.position])
+          return true
+        elsif (point = can_move_attack?(*args))
+          action.set_data([true,point])
+          return true
+        end
+        return false
       when :attack
         baseitem = initiator.data.get_attack_data
         func = lambda { |x, y| can_damage?(initiator, @map[x,y]) }
