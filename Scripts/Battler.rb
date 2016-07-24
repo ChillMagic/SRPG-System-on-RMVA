@@ -45,12 +45,11 @@ module SRPG
       type = action.type
       # TODO
       item = nil
-      # item = get_XXXXXX(type,id)
       object.each { |battler| damage_evaluate_basic(type, battler, item) }
     end
-    def damage_evaluate_basic(type, battler, item = nil)
+    def damage_evaluate_basic(type, battler, id = nil)
       return putError('The Battler had been dead.') if dead?
-      return BattleDamage.damage_evaluate(type, self, battler, item)
+      return BattleDamage.damage_evaluate(type, self, battler, id)
     end
     def set_damage(damage)
       self.hp -= AI.min(damage, self.hp)

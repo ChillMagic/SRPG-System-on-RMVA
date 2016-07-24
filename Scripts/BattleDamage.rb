@@ -26,19 +26,31 @@ module SRPG
       get_damage_basic(b1, b2, DataManager.get(:item,id).damage)
     end
     # Damage Evaluate
-    def self.damage_evaluate(type, b1, b2, item = nil)
+    def self.damage_evaluate(type, b1, b2, id = nil)
       result = AI::DamageEvaluate.new(0, 0)
       case type
       when :attack
         damage = get_attack_damage(b1, b2)
         result.damage = AI.max(damage, 0)
         # result.add_status = 0 # TODO
-      when :recover
-        # TODO
-        # item.get_damage(self, battle)
-      when :status
-        # TODO
+      when :skill
+        damage = get_skill_damage(b1, b2, id)
+        result.damage = damage
+      when :item
+        damage = get_item_damage(b1, b2, id)
+        result.damage = damage
       end
+      # case type
+      # when :attack
+      #   damage = get_attack_damage(b1, b2)
+      #   result.damage = AI.max(damage, 0)
+      #   # result.add_status = 0 # TODO
+      # when :recover
+      #   # TODO
+      #   # item.get_damage(self, battle)
+      # when :status
+      #   # TODO
+      # end
       return result
     end
   end

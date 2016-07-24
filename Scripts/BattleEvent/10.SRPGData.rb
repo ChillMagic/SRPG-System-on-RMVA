@@ -19,22 +19,8 @@ module SRPG::Data
   end
 
   class BaseItem
-    # scope
-    # 效果范围。
-    #
-    # 0: 无
-    # 1: 单个敌人
-    # 2: 全体敌人
-    # 3: 一个随机敌人
-    # 4: 两个随机敌人
-    # 5: 三个随机敌人
-    # 6: 四个随机敌人
-    # 7: 单个队友
-    # 8: 全体队友
-    # 9: 单个队友（战斗不能）
-    # 10: 全体队友（战斗不能）
-    # 11: 使用者
-    def useable_range_type
+    private
+    def useable_range_type_data
       case @data.scope
       when 0  # 0:  无      -> 无
         [:none,  :none]
@@ -52,42 +38,68 @@ module SRPG::Data
         []
       end
     end
+    def optional_range_data
+      self.note.get_range(:Opt)
+    end
+    def elected_range_data
+      self.note.get_range(:Elt)
+    end
+  end
+  class Attack
+    def initialize(opt_range, ele_range)
+      @opt_range, @ele_range = opt_range, ele_range
+    end
+    private
+    def optional_range_data
+      @opt_range
+    end
+    def elected_range_data
+      @ele_range
+    end
+  end
+  class Weapon
+    private
+    def useable_range_type_data
+      [:range, :enemy]
+    end
+    def optional_range_data
+      self.note.get_range(:Opt)
+    end
+    def elected_range_data
+      self.note.get_range(:Elt)
+    end
   end
 
-
-
-  # TODO
   class Battler
     include SRPG
-    #--------------
-    # + New
-    #--------------
+    #------------------
+    # + UseableRange
+    #------------------
     def get_attack_data
-      Data::Attack.new(attack_range)
+      Data::Attack.new(attack_optional_range, attack_elected_range)
     end
     def get_skill_data(id = nil)
       id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, id)#@skills[id])
     end
-    def skill_optional_range(id)
-      get_skill_data(id).useable_range.get_range(:optional)
-    end
-    def skill_elected_range(id)
-      get_skill_data(id).useable_range.get_range(:elected)
-    end
-    #--------------
-    # + Old
-    #--------------
-    def attack_range
-      # TODO
-      # p  weapons.collect { |w| Data::Note.new(w.note).get_range(:Attack) }
+    def attack_optional_range
       sr = self.note.get_range(:Attack)
-      wr = Note.new(weapon.note).get_range(:Attack) if (weapon)
-      range = wr ? wr : sr
-      return (range ? range : default_attack_range).diff([[0,0]])
+      if (weapon)
+        wr = weapon.useable_range.get_range(:optional)
+        range = wr ? wr : sr
+      else
+        range = sr
+      end
+      return (range ? range : default_attack_range).diff(SRPG::Range.post)
+    end
+    def attack_elected_range
+      weapon.useable_range.get_range(:elected)
     end
     def default_attack_range
       Range.range(1)
     end
+    #------------------
+    # + Animation
+    #------------------
     def normal_attack_animation_id
       if (weapon)
         weapon.animation_id
@@ -95,8 +107,11 @@ module SRPG::Data
         self.note.animation ? self.note.animation : 1
       end
     end
+    #------------------
+    # + Equip
+    #------------------
     def weapon
-      weapons.first
+      Data::Weapon.new(weapons.first)
     end
     # Data
     def armors
@@ -106,43 +121,13 @@ module SRPG::Data
       @data.equips
     end
     def weapons
-      if @datype == :actor
+      if (@datype == :actor)
         @data.weapons
       else
         []
       end
     end
     def refresh
-    end
-  end
-  class Attack
-    def initialize(attack_range)
-      @attack_range = attack_range
-    end
-    private
-    def optional_range
-      @attack_range
-    end
-    def elected_range
-      SRPG::Range.new([[0,0]])
-    end
-  end
-  class Skill
-    private
-    def optional_range
-      self.note.get_range(:Opt)
-    end
-    def elected_range
-      self.note.get_range(:Elt)
-    end
-  end
-  class Item
-    private
-    def optional_range
-      self.note.get_range(:Opt)
-    end
-    def elected_range
-      self.note.get_range(:Elt)
     end
   end
   

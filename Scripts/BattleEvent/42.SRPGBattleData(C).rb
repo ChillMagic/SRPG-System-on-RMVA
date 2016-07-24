@@ -10,29 +10,28 @@ module SRPG
     # * Action: Battle Basic
     #-------------------------
     def attack(sa, sb)
-      return use_skill(sa,sb)
+      call_damage(:attack, sa.data, sb.data)
     end
-    def use_skill(sa, sb, skill_id = 0)
-      a, b = sa.data, sb.data
+    def call_damage(type, a, b, id = 0)
       return putError("Error in Nil Batter.") if (a.nil? || b.nil?)
-      return putError("Error in Nil Skill ID.") if (skill_id.nil?)
-      # TODO
-      type = (skill_id > 0) ? :skill : :attack
-      skill = nil ###
-      result = a.damage_evaluate_basic(type, b)
+      result = a.damage_evaluate_basic(type, b, id)
       return putError("Error in Battle Result.") if (result.nil?)
       b.set_damage(result.damage)
       return b.dead?
     end
     def use_skill_real(id, setter, target, func)
-      skill = DataManager.get(:skill,id)
-      range = skill.useable_range.get_range(:elected,target.position)
+      use_baseitem_real(:skill, id, setter, target, func)
+    end
+    def use_baseitem_real(type, id, setter, target, func)
+      baseitem = DataManager.get(type,id)
+      range = baseitem.useable_range.get_range(:elected,target.position)
       dead = []
       range.each do |x, y|
         tar = @map[x, y]
         next if tar.data.nil?
         func.call(tar)
-        dead.push(tar) if (attack(setter, tar))
+        result = call_damage(type, setter.data, tar.data, id)
+        dead.push(tar) if (result)
       end
       dead
     end

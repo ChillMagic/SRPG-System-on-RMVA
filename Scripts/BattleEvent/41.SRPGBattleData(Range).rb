@@ -15,7 +15,7 @@ module SRPG
         route = move.nil? ? get_route(setter) : get_route_basic(setter,move)
         return route.get_points
       when :ao  # Attack Optional Basic
-        return setter.data.attack_range
+        return setter.data.attack_optional_range
       when :aom # Attack Optional Moved
         return get_range(:ao,setter).move(*setter.position)
       when :aoa # Attack Optional All
@@ -27,8 +27,7 @@ module SRPG
         arange = get_range(:aoa,setter)
         return arange.diff(mrange)
       when :ae  # Attack Elected
-        # TODO
-        return 
+        return setter.data.attack_elected_range.move(*setter.position)
       when :so  # Skill Optional Basic
         id = @actions.get_data
         return DataManager.get(:skill,id).useable_range.get_range(:optional)

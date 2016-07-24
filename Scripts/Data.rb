@@ -43,25 +43,5 @@ module SRPG
         return [map, px, py]
       end
     end
-    #--------------------------------
-    # + SelectAction
-    #--------------------------------
-    # Struct
-    class SelectAction
-      # Attr
-      attr_reader :type, :initiator, :target, :data
-      # Initialize
-      def initialize(type, initiator)
-        @type = type
-        @initiator = initiator
-      end
-      # Set
-      def set_target(target)
-        @target = target
-      end
-      def set_data(data)
-        @data = data
-      end
-    end
   end
 end

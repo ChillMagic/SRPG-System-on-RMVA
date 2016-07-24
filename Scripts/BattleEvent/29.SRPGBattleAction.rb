@@ -10,6 +10,7 @@ module SRPG
   #--------------------------------
   class BattleAction
     include Config
+    include ActionBasic
     #------------------------------
     # + Basic
     #------------------------------
@@ -25,35 +26,6 @@ module SRPG
     def get_record(*args);    @imports.instance_eval{get_record(*args)};    end
     def set_record(*args);    @imports.instance_eval{set_record(*args)};    end
     def change_record(*args); @imports.instance_eval{change_record(*args)}; end
-    # Set
-    def set_action(type, initiator)
-      @data = Data::SelectAction.new(type,initiator)
-    end
-    def set_target(target)
-      @data.set_target(target)
-    end
-    def set_data(data)
-      @data.set_data(data)
-    end
-    def clear_action
-      @data = nil
-    end
-    # Get
-    def get_action
-      @data
-    end
-    def get_type
-      @data ? @data.type : nil
-    end
-    def get_initiator
-      @data ? @data.initiator : nil
-    end
-    def get_target
-      @data ? @data.target : nil
-    end
-    def get_data
-      @data ? @data.data : nil
-    end
     #------------------------------
     # + Method
     #------------------------------

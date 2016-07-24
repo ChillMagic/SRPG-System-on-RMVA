@@ -19,6 +19,7 @@ import 'Record'
 import 'Debugger'
 import 'SpriteBasic'
 import 'EventBasic'
+import 'ActionBasic'
 include Chill
 
 # Compatible
