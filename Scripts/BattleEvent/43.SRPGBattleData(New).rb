@@ -42,22 +42,23 @@ module SRPG
       else
         return putError("Not find Action(#{type}).")
       end
-      useable_range = baseitem.range(initiator.position,target.position)
-      return check_range(useable_range,*target.position,func)
+      moved_range = baseitem.useable_range.moved_range(initiator.position,target.position)
+      return check_range(moved_range,*target.position,func)
     end
-    def check_range(useable_range, x, y, func)
-      return false unless useable_range.check_in(x, y)
-      return false unless useable_range.check_each { |x, y| func.call(x,y) }
+    def check_range(moved_range, x, y, func)
+      return false unless moved_range.check_in(x, y)
+      return false unless moved_range.check_each { |x, y| func.call(x,y) }
       return true
     end
-    def get_range_from_action(action)
-      case get_type
-      when :move
-        return UseableRange.new(battles.get_range(:m, action.get_initiator), nil)
-      when :attack
-        action.get_initiator.data.get_attack_data.range(action.get_initiator, action.get_target)
-      when :skill
-      end
-    end
+    #
+    # def get_range_from_action(action)
+    #   case get_type
+    #   when :move
+    #     return UseableRange.new(battles.get_range(:m, action.get_initiator), nil)
+    #   when :attack
+    #     action.get_initiator.data.get_attack_data.range(action.get_initiator, action.get_target)
+    #   when :skill
+    #   end
+    # end
   end
 end

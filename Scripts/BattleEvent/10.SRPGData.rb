@@ -17,7 +17,45 @@ module SRPG::Data
       Spriteset_Range.get_constexpr(Range[type][settype])
     end
   end
-  
+
+  class BaseItem
+    # scope
+    # 效果范围。
+    #
+    # 0: 无
+    # 1: 单个敌人
+    # 2: 全体敌人
+    # 3: 一个随机敌人
+    # 4: 两个随机敌人
+    # 5: 三个随机敌人
+    # 6: 四个随机敌人
+    # 7: 单个队友
+    # 8: 全体队友
+    # 9: 单个队友（战斗不能）
+    # 10: 全体队友（战斗不能）
+    # 11: 使用者
+    def useable_range_type
+      case @data.scope
+      when 0  # 0:  无      -> 无
+        [:none,  :none]
+      when 1  # 1:  单个敌人 -> 个体敌人
+        [:indiv, :enemy]
+      when 2  # 2:  全体敌人 -> 范围敌人
+        [:range, :enemy]
+      when 7  # 7:  单个队友 -> 个体队友
+        [:indiv, :party]
+      when 8  # 8:  全体队友 -> 范围队友
+        [:range, :party]
+      when 11 # 11: 使用者   -> 使用者
+        [:self,  :party]
+      else
+        []
+      end
+    end
+  end
+
+
+
   # TODO
   class Battler
     include SRPG
@@ -31,10 +69,10 @@ module SRPG::Data
       id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, id)#@skills[id])
     end
     def skill_optional_range(id)
-      get_skill_data(id).optional_range
+      get_skill_data(id).useable_range.get_range(:optional)
     end
     def skill_elected_range(id)
-      get_skill_data(id).elected_range
+      get_skill_data(id).useable_range.get_range(:elected)
     end
     #--------------
     # + Old
@@ -81,6 +119,7 @@ module SRPG::Data
     def initialize(attack_range)
       @attack_range = attack_range
     end
+    private
     def optional_range
       @attack_range
     end
@@ -89,6 +128,7 @@ module SRPG::Data
     end
   end
   class Skill
+    private
     def optional_range
       self.note.get_range(:Opt)
     end
@@ -97,6 +137,7 @@ module SRPG::Data
     end
   end
   class Item
+    private
     def optional_range
       self.note.get_range(:Opt)
     end

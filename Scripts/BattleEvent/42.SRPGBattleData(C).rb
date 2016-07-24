@@ -26,7 +26,7 @@ module SRPG
     end
     def use_skill_real(id, setter, target, func)
       skill = DataManager.get(:skill,id)
-      range = skill.elected_range.move(*target.position)
+      range = skill.useable_range.get_range(:elected,target.position)
       dead = []
       range.each do |x, y|
         tar = @map[x, y]

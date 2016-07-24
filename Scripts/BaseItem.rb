@@ -16,74 +16,41 @@ module SRPG
     #------------------------------
     # + UseableRange
     #------------------------------
-    class UseableRange
-      #--------
-      # + New
-      #--------
-      RangeData = Struct.new(:optional, :elected)
-      def initialize(optional, elected)
-        @ranges = RangeData.new(optional, elected)
-      end
-      def get_range(flag)
-        @ranges[flag]
-      end
-      def check_in(x, y)
-        @ranges[:optional].include?(x, y)
-      end
-      def check_each
-        @ranges[:elected].each { |x, y| return true if yield(x,y) }
-        return false
-      end
-      #--------
-      # + Old
-      #--------
-      # # Attr
-      # attr_reader :atktype, :rantype, :ranges
-      # # Const
-      # EffectType = [
-      #     :self,  # Self
-      #     :enemy, # Enemy
-      #     :party, # Party
-      # ]
-      # RangeType  = [
-      #     :none,  # None
-      #     :self,  # Self
-      #     :indiv, # Individual
-      #     :range, # Range
-      # ]
-      # RangeData = Struct.new(:optional,:elected)
-      # # Initialize
-      # def initialize(efftype, rantype, *ranges)
-      #   @efftype, @rantype = efftype, rantype
-      #   @ranges = get_ranges(type,ranges)
-      # end
-      # # Function
-      # def get_ranges(type, ranges)
-      #   putError("Not find type(#{type}) in UseableRange.") unless (RangeType.include?(type))
-      #   case type
-      #   when :self
-      #     optional = Range.range(0)
-      #     elected  = Range.range(0)
-      #   when :indiv
-      #     optional = ranges.first
-      #     elected  = Range.range(0)
-      #   when :range
-      #     optional = Range.range(0)
-      #     elected  = ranges.last
-      #   end
-      #   RangeData.new(optional,elected)
-      # end
-    end
+    # class UseableRange
+    #   #--------
+    #   # + New
+    #   #--------
+    #   RangeData = Struct.new(:optional, :elected)
+    #   def initialize(optional, elected)
+    #     @ranges = RangeData.new(optional, elected)
+    #   end
+    #   def get_range(flag)
+    #     @ranges[flag]
+    #   end
+    #   def check_in(x, y)
+    #     @ranges[:optional].include?(x, y)
+    #   end
+    #   def check_each
+    #     @ranges[:elected].each { |x, y| return true if yield(x,y) }
+    #     return false
+    #   end
+    # end
+    UseableRange = SRPG::NewData::UseableRange
     #--------------------------------
     # * BaseItem
     #--------------------------------
     class BaseItem < BaseData
       attr_reference :id
       def note; Note.new(@data.note); end
+      def damage; Damage.new(@data.damage); end
+      def useable_range_type; end
+      def useable_range
+        UseableRange.new(useable_range_type,{:optional=>optional_range,:elected=>elected_range})
+      end
+      def range(cp, tp); useable_range.moved_range(cp,tp) end
+      private
       def optional_range; end
       def elected_range;  end
-      def damage; Damage.new(@data.damage); end
-      def range(cp, tp); UseableRange.new(optional_range.move(*cp),elected_range.move(*tp)); end
     end
     #--------------------------------
     # * Others

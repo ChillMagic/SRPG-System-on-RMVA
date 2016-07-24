@@ -22,6 +22,7 @@ module SRPG
     #-----------------------------------------------
     def each(*args, &block)
       @data.each(*args,&block)
+      self
     end
     def include?(x, y)
       each { |tx, ty| return true if ((x == tx) && (y == ty)) }
@@ -169,6 +170,14 @@ module SRPG
     enum_settler :each, :move, :circumgyrate
     enum_settler :inter, :uinter, :union, :diff
   end
+  class WholeRange
+    def include?(x, y)
+      true
+    end
+    def move(x, y)
+      self
+    end
+  end
 end
 
 module SRPG
@@ -179,6 +188,14 @@ module SRPG
     #-----------------------------------------------
     # Calculate Range
     #-----------------------------------------------
+    def self.post(&block)
+      range = SRPG::Range.new([[0,0]])
+      return range if (!block)
+      range.each(&block)
+    end
+    def self.whole
+      SRPG::WholeRange.new
+    end
     def self.range_basic(d, x = 0, y = 0)
       if (d == 0)
         yield(x,y)

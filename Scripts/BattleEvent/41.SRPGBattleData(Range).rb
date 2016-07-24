@@ -31,7 +31,7 @@ module SRPG
         return 
       when :so  # Skill Optional Basic
         id = @actions.get_data
-        return DataManager.get(:skill,id).optional_range
+        return DataManager.get(:skill,id).useable_range.get_range(:optional)
       when :som # Skill Optional Moved
         return get_range(:so,setter).move(*setter.position)
       when :soa # Skill Optional All
@@ -40,8 +40,7 @@ module SRPG
         return AI.get_attack_range(mrange,srange)
       when :se  # Skill Elected
         id = @actions.get_data
-        range = DataManager.get(:skill,id).elected_range
-        return range.move(*setter.position)
+        return DataManager.get(:skill,id).useable_range.get_range(:elected,setter.position)
       end
     end
     def get_range_of_setter(type = nil)
