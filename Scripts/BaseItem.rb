@@ -11,7 +11,8 @@ module SRPG
     #--------------------------------
     class Damage
       include Reference
-      attr_reference :type, :element_id, :formula, :variance, :critical
+      attr_accessor  :type
+      attr_reference :element_id, :formula, :variance, :critical
     end
     #------------------------------
     # + UseableRange
@@ -103,12 +104,16 @@ module SRPG
     #--------------------------------
     class BaseItem < BaseData
       include UseableRangeModule
+      DamageType = [
+          :none,        # None
+          :hp_damage,   # HP Damage
+          :mp_damage,   # MP Damage
+          :hp_recover,  # HP Recover
+          :mp_recover,  # MP Recover
+      ]
       attr_reference :id
       def note
         Note.new(@data.note)
-      end
-      def damage
-        Damage.new(@data.damage)
       end
     end
     #--------------------------------

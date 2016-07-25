@@ -6,6 +6,7 @@
 
 module SRPG::Data
   include SRPG
+  include Config
   
   module Color
     Range = {
@@ -19,6 +20,11 @@ module SRPG::Data
   end
 
   class BaseItem
+    def damage
+      dam = Damage.new(@data.damage)
+      dam.type = useable_damage_type_data
+      dam
+    end
     private
     def useable_range_type_data
       case @data.scope
@@ -44,17 +50,30 @@ module SRPG::Data
     def elected_range_data
       self.note.get_range(:Elt)
     end
+    def useable_damage_type_data
+      DamageType[@data.damage.type]
+    end
   end
   class Attack
-    def initialize(opt_range, ele_range)
-      @opt_range, @ele_range = opt_range, ele_range
+    def initialize(data)
+      @opt_range, @ele_range = data[:useablerange][:optional], data[:useablerange][:elected]
+      @damage = data[:damage]
+    end
+    def damage
+      @damage
     end
     private
+    def useable_range_type_data
+      [:indiv, :enemy]
+    end
     def optional_range_data
       @opt_range
     end
     def elected_range_data
       @ele_range
+    end
+    def useable_damage_type_data
+      :hp_damage
     end
   end
   class Weapon
@@ -68,34 +87,87 @@ module SRPG::Data
     def elected_range_data
       self.note.get_range(:Elt)
     end
+    def useable_damage_type_data
+      :hp_damage
+    end
   end
 
   class Battler
     include SRPG
+    include Config
     #------------------
     # + UseableRange
     #------------------
+    # TODO
     def get_attack_data
-      Data::Attack.new(attack_optional_range, attack_elected_range)
+      Data::Attack.new(attack_data)
     end
     def get_skill_data(id = nil)
       id.nil? ? @skills.collect { |id| DataManager.get(:skill,id) } : DataManager.get(:skill, id)#@skills[id])
     end
     def attack_optional_range
-      sr = self.note.get_range(:Attack)
-      if (weapon)
-        wr = weapon.useable_range.get_range(:optional)
-        range = wr ? wr : sr
-      else
-        range = sr
-      end
-      return (range ? range : default_attack_range).diff(SRPG::Range.post)
+      get_attack_data.useable_range.get_range(:optional)
     end
     def attack_elected_range
-      weapon.useable_range.get_range(:elected)
+      get_attack_data.useable_range.get_range(:elected)
     end
-    def default_attack_range
-      Range.range(1)
+
+    AttackLoadDataType = [
+       :default, # 默认（自设定）
+       :actor,   # 角色（角色相关）
+       :weapon,  # 武器（武器相关）
+       :skill,   # 技能（固定为1号技能）
+    ]
+    def attack_data
+      uindex = AttackLoadDataType.index(AttackLoadData[:useablerange])
+      dindex = AttackLoadDataType.index(AttackLoadData[:damage])
+      func = ->(index, flag, judgefunc) do
+        data = nil
+        loop do
+          data = attack_data_basic(AttackLoadDataType[index])[flag]
+          break if (judgefunc.call(data) || index.zero?)
+          index -= 1
+        end
+        return data
+      end
+      udata = func.call(uindex, :useablerange, ->(data) { !data.values.include?(nil) })
+      ddata = func.call(dindex, :damage, ->(data) { data })
+      udata[:optional] = udata[:optional].diff(SRPG::Range.post)
+      { useablerange: udata, damage: ddata }
+    end
+    def attack_data_basic(type)
+      case type
+      when :default
+        {
+            useablerange: AttackDefaultUseableRange,
+            damage:       AttackDefaultDamage
+        }
+      when :actor
+        {
+            useablerange: {
+                optional: self.note.get_range(:Opt),
+                elected:  self.note.get_range(:Elt)
+            },
+            damage:       AttackDefaultDamage
+        }
+      when :weapon
+        {
+            useablerange: {
+                optional: weapon ? weapon.useable_range.get_range(:optional) : nil,
+                elected:  weapon ? weapon.useable_range.get_range(:elected) : nil
+            },
+            damage:       AttackDefaultDamage
+        }
+      when :skill
+        skill = DataManager.get(:skill,1)
+        {
+            useablerange: {
+                optional: skill.useable_range.get_range(:optional),
+                elected:  skill.useable_range.get_range(:elected)
+            },
+            damage:       skill.damage
+        }
+      end
     end
     #------------------
     # + Animation
@@ -111,7 +183,7 @@ module SRPG::Data
     # + Equip
     #------------------
     def weapon
-      Data::Weapon.new(weapons.first)
+      weapons.first.nil? ? nil : Data::Weapon.new(weapons.first)
     end
     # Data
     def armors
@@ -137,7 +209,7 @@ module SRPG::Data
       @data = data
     end
     def get_range(keyword = :Map)
-      if (@data =~ /#{keyword} *(\(.*\))/m)
+      if (@data =~ /#{keyword} *(\(.*?\))/m)
         return SRPG::Range.match_map($1,0)
       elsif (@data =~ /#{keyword} *: *(.*)/)
         return eval("SRPG::Range." + $1)

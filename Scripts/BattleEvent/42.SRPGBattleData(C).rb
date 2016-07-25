@@ -14,7 +14,8 @@ module SRPG
     end
     def call_damage(type, a, b, id = 0)
       return putError("Error in Nil Batter.") if (a.nil? || b.nil?)
-      result = a.damage_evaluate_basic(type, b, id)
+      baseitem = (type == :attack) ? a.get_attack_data : DataManager.get(type,id)
+      result = a.damage_evaluate_basic(type, b, baseitem)
       return putError("Error in Battle Result.") if (result.nil?)
       b.set_damage(result.damage)
       return b.dead?

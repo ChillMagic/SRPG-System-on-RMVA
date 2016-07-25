@@ -47,7 +47,7 @@ module SRPG
     # + Evaluate
     #------------------------------
     # Single conflict
-    DamageEvaluate  = Struct.new(:damage, :add_status)
+    DamageEvaluate  = Struct.new(:type, :damage, :add_status)
     BattlerStateKey = [
       :low_hp,
       :low_mp,

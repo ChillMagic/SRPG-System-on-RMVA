@@ -114,22 +114,22 @@ module SRPG
       end
       clear_action
     end
-  end
-  # From ActivePost to a setter.
-  def move_start
-    event.move(active_post, *get_data[1])
-    set_record(:move_position,  active_post.position)
-    set_record(:move_direction, @imports.active_event.direction)
-    change_record(:move_attack, get_data[0])
-    @imports.record_direction if (get_data[0])
-  end
-  def move_recover
-    active_post.status.unmove
-    x, y = get_record(:move_position)
-    if (active_post.position != [x, y])
-      @imports.active_event.set_direction(get_record(:move_direction))
-      active_post.moveTo(x,y)
-      @imports.active_event.moveto(x,y)
+    # From ActivePost to a setter.
+    def move_start
+      event.move(active_post, *get_data[1])
+      set_record(:move_position,  active_post.position)
+      set_record(:move_direction, @imports.active_event.direction)
+      change_record(:move_attack, get_data[0])
+      @imports.record_direction if (get_data[0])
+    end
+    def move_recover
+      active_post.status.unmove
+      x, y = get_record(:move_position)
+      if (active_post.position != [x, y])
+        @imports.active_event.set_direction(get_record(:move_direction))
+        active_post.moveTo(x,y)
+        @imports.active_event.moveto(x,y)
+      end
     end
   end
 end

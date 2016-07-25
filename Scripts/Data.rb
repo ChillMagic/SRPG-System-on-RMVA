@@ -24,14 +24,14 @@ module SRPG
         # Match
         str.each_char do |c|
           case c
-            when "\n"
-              line += 1
-              next
-            when "P"
-              data.push(count_p)
-              record = count
-            else
-              data.push(c.to_i)
+          when "\n"
+            line += 1
+            next
+          when "P"
+            data.push(count_p)
+            record = count
+          else
+            data.push(c.to_i)
           end
           count += 1
         end
