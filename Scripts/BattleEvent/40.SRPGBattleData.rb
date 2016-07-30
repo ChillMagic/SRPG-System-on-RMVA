@@ -24,10 +24,8 @@ module SRPG
     MoveRouteRecord = Struct.new(:chrecord, :route)
     # Initialize
     def initialize
-      battlemap = Data::BattleMap.new($game_map)
-      @map = battlemap.settermap
-      @datalist = battlemap.datalist
-      @passmap = battlemap.passmap # TODO
+      @map = Data::BattleMap.new($game_map)
+      @datalist = @map.datalist
       start
     end
     def set_actions(actions)
@@ -41,8 +39,6 @@ module SRPG
     end
     def set_data
       set_actionlist
-#~       puts @datalist
-#~       puts @actionlist
     end
     # Set SetterMap
     def set_actionlist
@@ -58,13 +54,13 @@ module SRPG
       return [setter.data.agi, setter.data.level]
     end
     def get_actors
-      @datalist[:actor].collect { |b| b.data.data }
+      @datalist[:actor].collect { |b| b.data }
     end
     def get_enemies
-      @datalist[:enemy].collect { |b| b.data.data }
+      @datalist[:enemy].collect { |b| b.data }
     end
     def get_battlers
-      @datalist.collect { |b| b.data.data }
+      @datalist.collect { |b| b.data }
     end
     
     #-------------------------
@@ -204,16 +200,6 @@ module SRPG
         data.push(target) if is_enemy?(setter,target)
       end
       return data
-    end
-    #-------------------------
-    # * Get BaseItem Data
-    #-------------------------
-    # TODO
-    # description :
-    # input : skill_id
-    # ouput : Data::Skill
-    def get_skill(id)
-
     end
     #-------------------------
     # * Get ShowData

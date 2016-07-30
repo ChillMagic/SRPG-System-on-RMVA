@@ -13,6 +13,9 @@ module SRPG
       # Data
       attr_reader :id, :type, :datype, :data
       # Basic
+      attr_reference :name, :nickname, :face_name, :face_index, :state_icons, :buff_icons, :hp_rate, :mp_rate, :max_level?, :exp, :next_level_exp
+      attr_reference :description, :class
+      attr_referencefun :param
       attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
       # Other
       attr_reference :level, :move, :view

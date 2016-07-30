@@ -42,32 +42,17 @@ module SRPG
         return DataManager.get(:skill,id).useable_range.get_range(:elected,setter.position)
       end
     end
-    def get_range_of_setter(type = nil)
-      Range.new do |p|
-        @map.each_index do |x,y|
-          mtype = get_setter(x,y).type
-          p << [x,y] if (type ? (mtype == type) : (mtype != :blank))
-        end
-      end
-    end
-    def check_range_of(range, *types)
-      range.any? { |x,y| types.include?(@map[x,y].type) if (@map[x,y]) }
-    end
-    def get_object_of_skill(range, type)
-      range.select { |x,y| @map[x,y] && @map[x,y].type == type }.collect { |x,y| @map[x,y] }
-    end
+    # def check_range_of(range, *types)
+    #   range.any? { |x,y| types.include?(@map[x,y].type) if (@map[x,y]) }
+    # end
+    # def get_object_of_skill(range, type)
+    #   range.select { |x,y| @map[x,y] && @map[x,y].type == type }.collect { |x,y| @map[x,y] }
+    # end
     #-------------------------
     # * Get PassMap
     #-------------------------
     def get_pass_map(type)
-      map = @passmap.clone
-      @actionlist.each do |setter|
-        x, y = setter.position
-        next if (map[x,y] == MoveType[:unpass])
-        movetype = is_enemy_type?(type,setter.type) ? :unpass : :pass
-        map[x,y] = MoveType[movetype]
-      end
-      return map
+      @map.get_passmap(EnemyTypeData[type])
     end
     #-------------------------
     # * Get Route
@@ -104,7 +89,7 @@ module SRPG
     end
     def get_attack_move_point(setter, x, y, move = nil)
       route   = get_route(setter,move)
-      mrange  = get_range(:m,setter,move).diff(get_range_of_setter).union([setter.position])
+      mrange  = get_range(:m,setter,move).diff(@map.get_range_of_setter).union([setter.position])
       abrange = get_range(:ao,setter,move)
       return AI.get_attack_point(route, mrange, abrange, x, y)
     end

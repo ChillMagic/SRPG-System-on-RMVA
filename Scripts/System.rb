@@ -105,6 +105,9 @@ class Module
   def attr_referenceref(*symbols)
     symbols.each { |sym| module_eval("def #{sym}; @data.#{sym}; end; def #{sym}=(e); @data.#{sym}=(e); end") }
   end
+  def attr_referencefun(*symbols)
+    symbols.each { |sym| module_eval("def #{sym}(*args); @data.#{sym}(*args); end") }
+  end
 end
 class Struct
   def assign_with_struct(struct)

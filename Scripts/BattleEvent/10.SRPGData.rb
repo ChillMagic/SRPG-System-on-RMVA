@@ -376,6 +376,44 @@ module SRPG::Data
       @datalist[:obstacle].each { |s| passmap[s.x,s.y] = 0 }
       return passmap
     end
+    #---------------------------
+    # * Self Method
+    #---------------------------
+    def get_passmap(types)
+      passmap = self.passmap
+      types.each { |type| @datalist[type].each { |s| passmap[s.x,s.y] = 0 } }
+      return passmap
+    end
+    def get_range_of_setter(types)
+      if (types)
+        array = types.collect { |type| @datalist[type].collect { |s| [s.x, s.y] } }.flatten
+      else
+        array = @datalist.collect { |s| [s.x, s.y] }
+      end
+      Range.new(array)
+    end
+    #---------------------------
+    # * SetterMap Method
+    #---------------------------
+    def [](x, y)
+      @settermap[x,y]
+    end
+    def out?(x, y)
+      @settermap.out?(x,y)
+    end
+    def each(&block)
+      @settermap.each(&block)
+    end
+    def each_index(&block)
+      @settermap.each_index(&block)
+    end
+    def chrecord
+      @settermap.chrecord
+    end
+    #---------------------------
+    # * Initialize Data
+    #---------------------------
+    private
     # Init Data
     def init_data
       init_datalist
@@ -410,9 +448,7 @@ module SRPG::Data
       @basepassmap = Map.new(@width,@height)
       @basepassmap.set_with_index { |x,y| @data.check_passage(x,y,0xf) ? 1 : 0 }
     end
-    #---------------------------
-    # Lambdas
-    #---------------------------
+    # Handle
     def datafunc
       lambda do |datype, id|
         case datype
