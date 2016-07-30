@@ -137,9 +137,7 @@ module SRPG
         Note.new(@data.note)
       end
     end
-    class Weapon < Equip
-      include UseableRangeModule
-    end
+    class Weapon < Equip; end
     class Armor < Equip; end
 
     class State < BaseData; end

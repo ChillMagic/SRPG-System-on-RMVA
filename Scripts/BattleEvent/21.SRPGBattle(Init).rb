@@ -15,7 +15,7 @@ class SRPG::Battle
   include Config
   # Initialize
   def initialize
-    # Set Imports
+    # Set Interfaces
     @sprites = Spriteset_SRPGMap.new
     @windows = Windows_SRPGMap.new
     @battles = BattleData.new
@@ -59,7 +59,8 @@ class SRPG::Battle
   def initialize_position
     battles.datalist[:actor].each do |setter|
       event = get_event(setter)
-      id = Data::EventName.get_position(event.event.name)
+      evname = Data::EventName.new(event.event.name)
+      id = evname.is_setpost? ? evname.get_record : 0
       next if (id == 0)
       a = setter.data.data
       event.set_graphic(a.character_name,a.character_index)
