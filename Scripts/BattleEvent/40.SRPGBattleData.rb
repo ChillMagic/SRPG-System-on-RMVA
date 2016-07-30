@@ -24,8 +24,10 @@ module SRPG
     MoveRouteRecord = Struct.new(:chrecord, :route)
     # Initialize
     def initialize
-      @map, @datalist = Data::MapData.get_settermap
-      @passmap = Data::MapData.get_passmap
+      battlemap = Data::BattleMap.new($game_map)
+      @map = battlemap.settermap
+      @datalist = battlemap.datalist
+      @passmap = battlemap.passmap # TODO
       start
     end
     def set_actions(actions)

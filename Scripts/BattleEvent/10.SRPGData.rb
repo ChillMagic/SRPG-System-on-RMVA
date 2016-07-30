@@ -203,6 +203,9 @@ module SRPG::Data
     end
   end
 
+  #-------------------------
+  # * Class Note
+  #-------------------------
   class Note
     attr_reader :data
     def initialize(data)
@@ -252,6 +255,9 @@ module SRPG::Data
     end
   end
 
+  #-------------------------
+  # * Class EventName
+  #-------------------------
   class EventName
     # Const
     BattlerDataSymbol = {
@@ -350,24 +356,64 @@ module SRPG::Data
     end
   end
 
-  module MapData
+  #-------------------------
+  # * Class BattleMap
+  #-------------------------
+  class BattleMap
+    # Include
     include SRPG
-    # Set SetterMap
-    def self.get_settermap
-      map = SetterMap.new(wx,wy)
-      datalist = SetterDatas.new
-      $game_map.events.each do |ev_id,event|
-        name   = event.event.name
-        # TODO : Create a function include these.
-        battler = EventName.new(name).get_battler(datafunc,listfunc)
-        next if battler.nil?
-        setter  = Setter.new(battler.type,ev_id,battler)
-        set_setter(map, datalist, event.x, event.y, Setter.new(battler.type,ev_id,battler))
+    # Attr
+    attr_reader :width, :height
+    attr_reader :datalist, :settermap, :basepassmap
+    # Initialize
+    def initialize(data)
+      @data = data
+      @width, @height = data.width, data.height
+      init_data
+    end
+    def passmap
+      passmap = @basepassmap.clone
+      @datalist[:obstacle].each { |s| passmap[s.x,s.y] = 0 }
+      return passmap
+    end
+    # Init Data
+    def init_data
+      init_datalist
+      init_settermap
+      init_basepassmap
+    end
+    def init_datalist
+      @datalist = SetterDatas.new
+      @data.events.each do |ev_id, event|
+        evname = EventName.new(event.event.name)
+        case evname.get_type
+        when :battler, :setpost
+          data = evname.get_battler(datafunc,listfunc)
+          type = data.type
+        when :obstacle, :event
+          type = evname.get_type
+          data = nil
+        else
+          next
+        end
+        @datalist.push(Setter.new(type,ev_id,data))
       end
-      [map, datalist]
+    end
+    def init_settermap
+      @settermap = SetterMap.new(@width,@height)
+      @datalist.each do |s|
+        event = @data.events[s.id]
+        @settermap[event.x,event.y] = s
+      end
+    end
+    def init_basepassmap
+      @basepassmap = Map.new(@width,@height)
+      @basepassmap.set_with_index { |x,y| @data.check_passage(x,y,0xf) ? 1 : 0 }
     end
     #---------------------------
-    def self.datafunc
+    # Lambdas
+    #---------------------------
+    def datafunc
       lambda do |datype, id|
         case datype
         when :actor
@@ -377,33 +423,16 @@ module SRPG::Data
         end
       end
     end
-    def self.listfunc
-      lambda { |id| $game_party.all_members[id-1] }
-    end
-    #---------------------------
-    def self.set_setter(map, datalist, x, y, setter)
-      map[x, y] = setter
-      datalist.push(setter)
-    end
-    def self.get_passmap
-      map = SRPG::Map.new(wx,wy)
-      map.set_with_index { |x,y| $game_map.check_passage(x,y,0xf) ? 1 : 0 }
-      $game_map.events.each_value do |event|
-        name = event.event.name
-        map[event.x, event.y] = 0 if (EventName.new(name).is_obstacle?)
+    def listfunc
+      lambda do |id|
+        $game_party.all_members[id-1]
       end
-      return map
-    end
-
-    private
-    def self.wx
-      $game_map.width
-    end
-    def self.wy
-      $game_map.height
     end
   end
 
+  #-------------------------
+  # * Module Move
+  #-------------------------
   module Move
     private
     # Kernel
