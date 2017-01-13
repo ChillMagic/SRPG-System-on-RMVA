@@ -97,6 +97,7 @@ class SRPG::Battle
   #-----------------------------
   # * Update Other
   #-----------------------------
+  include SRPG::MoveKey
   def update_input
     move_key.each do |d|
       if Input.press?(d)

@@ -19,3 +19,24 @@ module SRPG
     end
   end
 end
+
+
+# Compatible
+$global = binding
+def compatible_
+  eval(%{
+class << SRPG::Battle
+  def print_gotolog?;        false;                 end
+end
+class Spriteset_Range
+  Blue    = 0  # 蓝色
+  Orange  = 1  # 橙色
+  Red     = 2  # 红色
+  Celeste = 3  # 青色
+  Green   = 4  # 绿色
+  Gray    = 5  # 灰色
+end
+       }, $global)
+end
+
+compatible_

@@ -12,7 +12,7 @@ module SRPG
     def get_range(type, setter, move = nil)
       case type
       when :m   # Move
-        route = move.nil? ? get_route(setter) : get_route_basic(setter,move)
+        route = get_route(setter,move)
         return route.get_points
       when :ao  # Attack Optional Basic
         return setter.data.attack_optional_range
@@ -57,18 +57,19 @@ module SRPG
     #-------------------------
     # * Get Route
     #-------------------------
-    def get_route(setter,move = nil)
-      # Record Check
+    def get_route(setter, move = nil)
       if (move.nil?)
+        # Record Check
         first_set_record(__method__,Hash.new)
         record = (get_record(__method__)[setter] ||= MoveRouteRecord.new)
         return record.route if (@map.chrecord == record.chrecord)
-      end
-      # Get Route
-      route = get_route_basic(setter, move ? move : setter.data.move)
-      # Set Record
-      if (move.nil?)
+        # Get Route
+        route = get_route_basic(setter, setter.data.move)
+        # Set Record
         record.chrecord, record.route = @map.chrecord, route
+      else
+        # Get Route
+        route = get_route_basic(setter, move)
       end
       # Return
       return route

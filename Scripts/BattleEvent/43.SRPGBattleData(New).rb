@@ -7,9 +7,9 @@
 module SRPG
   class BattleData
     # Range -> Battlers
-    def get_battlers(range, types)
-      range.select { |x,y| types.include?(@map[x,y].type) }.collect { |x,y| @map[x,y] }
-    end
+    # def get_battlers(range, types)
+      # range.select { |x,y| types.include?(@map[x,y].type) }.collect { |x,y| @map[x,y] }
+    # end
     # Check
     #  action : SelectAction
     def check_action(action)

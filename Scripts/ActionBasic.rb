@@ -48,16 +48,16 @@ module SRPG
       @data
     end
     def get_type
-      @data ? @data.type : nil
+      get_action ? @data.type : nil
     end
     def get_initiator
-      @data ? @data.initiator : nil
+      get_action ? @data.initiator : nil
     end
     def get_target
-      @data ? @data.target : nil
+      get_action ? @data.target : nil
     end
     def get_data
-      @data ? @data.data : nil
+      get_action ? @data.data : nil
     end
   end
 end

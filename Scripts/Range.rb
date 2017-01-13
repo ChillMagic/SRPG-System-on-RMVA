@@ -34,6 +34,10 @@ module SRPG
     def find_min_dis(x, y)
       @data.min { |p1, p2| AI.distance(*p1,x,y)<=>AI.distance(*p2,x,y) }
     end
+    def empty?
+      each { |x,y| return false }
+      return true
+    end
     def to_ary
       data = Array.new
       each { |x, y| data.push([x,y]) }

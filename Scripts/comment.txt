@@ -1,4 +1,58 @@
-﻿  # #--------------------------------
+﻿
+class Class
+  def define_typemethod(_func_, _types_, _lambda_)
+    self.instance_eval do
+      define_method(_func_) do |*args|
+        Chill.checkType(0, _func_, _types_, args)
+        _lambda_.call(*args)
+      end
+    end
+  end
+end
+
+
+class Point < Struct.new(:x, :y)
+  def get_self
+    self
+  end
+  def add(x)
+    self.class.define_typemethod :add, [Integer], ->() do
+      p self
+      p self.x + x
+    end
+  end
+
+  #define_method(:add) do |x|
+  #  Chill.checkType(0, :add, [Integer], [x])
+  #  return self.x + 0
+  #end
+  def initialize(x, y)
+    self.x = x
+    self.y = y
+  end
+end
+
+pt = Point.new(5, 6)
+
+p pt.add(5)
+#p pt.sub.call(5)
+
+#def add(a, b)
+#  return a + b
+#end
+
+#puts("(defun add [(Int a) (Int b)]
+#  (return (+ a b))
+#)")
+
+def __main__
+  #puts("Hello World!");
+  #puts(add(5, 6));
+end
+
+__main__
+
+  # #--------------------------------
   # # * Class Equip
   # #--------------------------------
   # class Equip

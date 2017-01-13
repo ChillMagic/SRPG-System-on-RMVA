@@ -10,22 +10,10 @@ module SRPG
   #--------------------------------
   module Data
     class Battler < BaseData
-      # Data
-      attr_reader :id, :type, :datype, :data
       # Basic
-      attr_reference :name, :nickname, :face_name, :face_index, :state_icons, :buff_icons, :hp_rate, :mp_rate, :max_level?, :exp, :next_level_exp
-      attr_reference :description, :class
-      attr_referencefun :param
       attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
       # Other
       attr_reference :level, :move, :view
-      # Method
-      def init(id, type, datype, data)
-        @id     = id
-        @type   = type
-        @datype = datype
-        @data   = data
-      end
       def note
         Data::Note.new(@data.note)
       end
@@ -35,11 +23,16 @@ module SRPG
   # * Class Battler
   #--------------------------------
   class Battler < Data::Battler
+    # Data
+    attr_reader :id, :type, :datype, :data
     # Variable
     attr_referenceref :hp, :mp, :tp
     # Initialize
     def initialize(id, type, datype, data)
-      init(id, type, datype, data)
+      @id     = id
+      @type   = type
+      @datype = datype
+      @data   = data
     end
     def dead?
       self.hp <= 0

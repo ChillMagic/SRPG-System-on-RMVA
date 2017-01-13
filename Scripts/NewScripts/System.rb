@@ -33,7 +33,12 @@ module Chill
         end
       end
     end
-    def self.checkSingleType(line, class_, meth, type, args)
+    def self.checkSingleType(line, class_, meth, type, arg)
+      unless checkTypeBase(type, arg)
+        putTypeErrorMessage(line, class_, meth, type, arg)
+      end
+    end
+    def self.checkSingleTypes(line, class_, meth, type, args)
       args.each do |value|
         unless checkTypeBase(type, value)
           putTypeErrorMessage(line, class_, meth, type, value)
@@ -43,7 +48,7 @@ module Chill
     def self.putTypeErrorMessage(line, class_, meth, type, value, parcount = nil)
       puts("Error type in line(#{line}), method '#{class_}##{meth}'" +
                (parcount ? " for par(#{parcount})" : "") +
-              ", #{value.class} => #{type}.")
+               ", #{value.class} => #{type}.")
       exit
     end
     def self.checkTypeBase(type, value)
@@ -53,6 +58,8 @@ module Chill
     def self.checkType(*args)
     end
     def self.checkSingleType(*args)
+    end
+    def self.checkSingleTypes(*args)
     end
   end
 end
@@ -83,13 +90,13 @@ BEGIN {
     private
     def getInfo(msg, type)
       case type
-        when :error
-          "#ERROR:\n>  " + msg + "\n"
-        when :warning
-          @errcount ||= 0
-          "#WARNING(#{@errcount+=1}):\n>  " + msg + "\n"
-        else
-          ""
+      when :error
+        "#ERROR:\n>  " + msg + "\n"
+      when :warning
+        @errcount ||= 0
+        "#WARNING(#{@errcount+=1}):\n>  " + msg + "\n"
+      else
+        ""
       end
     end
     def putInfo(msg, type)

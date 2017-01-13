@@ -74,7 +74,8 @@ module SRPG
     end
     def move(fx, fy, tx, ty)
       return if (judgeError(fx,fy) || judgeError(tx,ty))
-      return putWarning("Move Self to Self(#{tx}, #{ty}).") if ((fx == tx) && (fy == ty))
+      # return putWarning("Move Self to Self(#{tx}, #{ty}).") if ((fx == tx) && (fy == ty))
+      return if ((fx == tx) && (fy == ty))
       return putError("There is Not Blank.") if (!get(tx,ty).blank?)
       swap(fx, fy, tx, ty)
       get(tx,ty).setPost(tx,ty)

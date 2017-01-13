@@ -48,8 +48,7 @@ class SRPG::Battle
       @record
     end
     def sprite
-      @sprite ||= Spriteset_SRPGMap.new
-      # @record.sprites
+      @record.sprites
     end
     # Sprite
     def dispose_sprite

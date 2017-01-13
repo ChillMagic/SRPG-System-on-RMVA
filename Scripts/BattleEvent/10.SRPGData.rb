@@ -97,6 +97,14 @@ module SRPG::Data
     include SRPG
     include Config
     #------------------
+    # + Attr Reference
+    #------------------
+    attr_reference :name, :nickname, :face_name, :face_index
+    attr_reference :state_icons, :buff_icons
+    attr_reference :hp_rate, :mp_rate, :max_level?, :exp, :next_level_exp
+    attr_reference :description, :class
+    attr_referencefun :param
+    #------------------
     # + UseableRange
     #------------------
     def get_attack_data
@@ -313,7 +321,7 @@ module SRPG::Data
         return putError('This Event is Not Battler.')
       end
       # Get Adjust TODO
-      note = SRPG::DataManager.get(datype,battler.id).note
+      note  = SRPG::DataManager.get(datype,battler.id).note
       move  = (SetValueRegexp[:move].any? {|e|@data=~e}) ? $1.to_i : note.move
       view  = (SetValueRegexp[:view].any? {|e|@data=~e}) ? $1.to_i : note.view
       level = (SetValueRegexp[:level].any?{|e|@data=~e}) ? $1.to_i : battler.level
@@ -384,13 +392,16 @@ module SRPG::Data
       types.each { |type| @datalist[type].each { |s| passmap[s.x,s.y] = 0 } }
       return passmap
     end
-    def get_range_of_setter(types)
+    def get_range_of_setter(types = nil)
       if (types)
         array = types.collect { |type| @datalist[type].collect { |s| [s.x, s.y] } }.flatten
       else
         array = @datalist.collect { |s| [s.x, s.y] }
       end
       Range.new(array)
+    end
+    def reset_status
+      @settermap.each { |e| e.status.reset }
     end
     #---------------------------
     # * SetterMap Method
@@ -461,7 +472,7 @@ module SRPG::Data
     end
     def listfunc
       lambda do |id|
-        $game_party.all_members[id-1]
+        $game_party.all_members[id-1].clone
       end
     end
   end

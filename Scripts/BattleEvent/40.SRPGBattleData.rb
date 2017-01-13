@@ -53,6 +53,9 @@ module SRPG
       # ! Action List Sort !
       return [setter.data.agi, setter.data.level]
     end
+    def get_current_type_datas
+      @datalist[SRPG::Battle.data.active_post.type].collect { |b| b.data }
+    end
     def get_actors
       @datalist[:actor].collect { |b| b.data }
     end
@@ -67,7 +70,7 @@ module SRPG
     # * Command
     #-------------------------
     def reset_status
-      @map.each { |e| e.status.reset }
+      @map.reset_status
     end
     
     #-------------------------
