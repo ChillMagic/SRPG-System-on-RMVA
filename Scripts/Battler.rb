@@ -4,6 +4,8 @@
 # Update : 03/17/2016
 #=================================================
 
+#require_relative 'NewScripts/Battler'
+
 module SRPG
   #--------------------------------
   # * Class Data::Battler
