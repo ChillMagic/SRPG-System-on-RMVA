@@ -9,7 +9,10 @@ module SRPG
     #--------------------------------
     # * BaseData
     #--------------------------------
-    class BaseData < ReferClass
+    class BaseData
+      def initialize(data)
+        @data = data
+      end
       def have_nil?
         @data.nil?
       end

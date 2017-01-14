@@ -1,10 +1,6 @@
-
-
-puts File.dirname(__FILE__)
-
 require_relative 'Data/Battler'
 
-p 'loading SRPG::Battler'
+puts('loading SRPG::Battler')
 
 module SRPG
   class Battler

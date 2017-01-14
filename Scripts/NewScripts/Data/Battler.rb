@@ -5,7 +5,7 @@ module SRPG
     #--------------------------------------
     # + Struct Data::Battler
     #--------------------------------------
-    class Battler
+    class BattlerNew
       #--------------------------------------
       # + Attribute
       #--------------------------------------
@@ -20,5 +20,7 @@ module SRPG
         @mparam = MapParam.new
       end
     end
+
+    #BattlerNew = Battler
   end
 end

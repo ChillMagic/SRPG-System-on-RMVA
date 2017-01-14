@@ -98,7 +98,7 @@ module SRPG
         battler.view  = view
         battler.level = level
         # Return
-        SRPG::Battler.new(battler.id, type, datype, battler)
+        return SRPG::Battler.new(battler.id, type, datype, battler)
       end
       # Check
       def is_battler?

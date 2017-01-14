@@ -4,14 +4,21 @@
 # Update : 03/17/2016
 #=================================================
 
-#require_relative 'NewScripts/Battler'
+require_relative 'NewScripts/Data/Battler'
 
 module SRPG
   #--------------------------------
   # * Class Data::Battler
   #--------------------------------
   module Data
-    class Battler < BaseData
+    class Battler
+      def initialize(data)
+        p 1
+        @data = data
+      end
+      def have_nil?
+        @data.nil?
+      end
       # Basic
       attr_reference :mhp, :mmp, :atk, :def, :mat, :mdf, :agi, :luk
       # Other
@@ -26,16 +33,60 @@ module SRPG
   #--------------------------------
   class Battler < Data::Battler
     # Data
-    attr_reader :id, :type, :datype, :data
-    # Variable
-    attr_referenceref :hp, :mp, :tp
+    attr_reader :id, :type, :datype
     # Initialize
     def initialize(id, type, datype, data)
+      p 2
+      #p [id, type, datype, data]
       @id     = id
       @type   = type
       @datype = datype
-      @data   = data
+      compatible_initialize(data)
     end
+
+    def compatible_initialize(data)
+      @old_data = data
+      
+      @data = Data::BattlerNew.new
+      @data.bparam.mhp = data.mhp
+      @data.bparam.mmp = data.mmp
+      @data.bparam.pat = data.atk
+      @data.bparam.pdf = data.def
+      @data.bparam.mat = data.mat
+      @data.bparam.mdf = data.mdf
+      @data.bparam.agi = data.agi
+      @data.bparam.luk = data.luk
+
+      @data.mparam.move = data.move
+      @data.mparam.view = data.view
+
+      @hp = data.hp
+      @mp = data.mp
+      @tp = data.tp
+      @level = data.level
+    end
+    #--------------------------------------
+    # + Parameters
+    #--------------------------------------
+    def hp;    return @hp               end
+    def mp;    return @mp               end
+    def tp;    return @tp               end
+    def level; return @level            end
+    def mhp;   return @data.bparam.mhp  end
+    def mmp;   return @data.bparam.mmp  end
+    def msp;   return @data.bparam.msp  end
+    def atk;   return @data.bparam.pat  end
+    def def;   return @data.bparam.pdf  end
+    def mat;   return @data.bparam.mat  end
+    def mdf;   return @data.bparam.mdf  end
+    def agi;   return @data.bparam.agi  end
+    def luk;   return @data.bparam.luk  end
+    def move;  return @data.mparam.move end
+    def view;  return @data.mparam.view end
+    
+    def data;  return @old_data         end
+
+
     def dead?
       self.hp <= 0
     end
