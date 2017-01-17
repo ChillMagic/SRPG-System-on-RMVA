@@ -1,7 +1,5 @@
 require_relative 'Data/Battler'
 
-puts('loading SRPG::Battler')
-
 module SRPG
   class Battler
     #--------------------------------------
@@ -16,8 +14,7 @@ module SRPG
     # + Initialize
     #--------------------------------------
     def initialize(id, troop_id, battler_data, level, equip)
-      Chill.checkType(__LINE__, self.class, __method__,
-                      [Integer, Integer, Data::Battler, Data::Equip],
+      Chill.checkType([Integer, Integer, Data::Battler, Data::Equip],
                       [id, troop_id, battler_data, equip])
       @id = id
       @troop_id = troop_id
@@ -25,28 +22,28 @@ module SRPG
       @level = level
       @equips = equip # TODO
 
-      @hp = @data.bparam.mhp
-      @mp = @data.bparam.mmp
-      @sp = @data.bparam.msp
+      @hp = @data.mhp
+      @mp = @data.mmp
+      @sp = @data.msp
     end
 
     #--------------------------------------
     # + Parameters
     #--------------------------------------
-    def hp;    return @hp               end
-    def mp;    return @mp               end
-    def sp;    return @sp               end
-    def level; return @level            end
-    def mhp;   return @data.bparam.mhp  end
-    def mmp;   return @data.bparam.mmp  end
-    def msp;   return @data.bparam.msp  end
-    def pat;   return @data.bparam.pat  end
-    def pdf;   return @data.bparam.pdf  end
-    def mat;   return @data.bparam.mat  end
-    def mdf;   return @data.bparam.mdf  end
-    def agi;   return @data.bparam.agi  end
-    def luk;   return @data.bparam.luk  end
-    def move;  return @data.mparam.move end
-    def view;  return @data.mparam.view end
+    def mp;    return @mp        end
+    def hp;    return @hp        end
+    def sp;    return @sp        end
+    def level; return @level     end
+    def mhp;   return @data.mhp  end
+    def mmp;   return @data.mmp  end
+    def msp;   return @data.msp  end
+    def pat;   return @data.pat  end
+    def pdf;   return @data.pdf  end
+    def mat;   return @data.mat  end
+    def mdf;   return @data.mdf  end
+    def agi;   return @data.agi  end
+    def luk;   return @data.luk  end
+    def move;  return @data.move end
+    def view;  return @data.view end
   end
 end

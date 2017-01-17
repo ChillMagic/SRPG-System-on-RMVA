@@ -21,35 +21,34 @@ module Chill
   CHECK_FUNCTION = true
 
   if CHECK_FUNCTION
-    def self.checkType(line, class_, meth, types, args)
+    def self.checkType(types, args)
       if (types.length != args.length)
-        putTypeErrorMessage(line, class_, meth, type, value)
+        putTypeErrorMessage(type, value)
       end
       types.each_index do |i|
         type = types[i]
         value = args[i]
         unless checkTypeBase(type, value)
-          putTypeErrorMessage(line, class_, meth, type, value, i+1)
+          putTypeErrorMessage(type, value, i+1)
         end
       end
     end
-    def self.checkSingleType(line, class_, meth, type, arg)
+    def self.checkSingleType(type, arg)
       unless checkTypeBase(type, arg)
-        putTypeErrorMessage(line, class_, meth, type, arg)
+        putTypeErrorMessage(type, arg)
       end
     end
-    def self.checkSingleTypes(line, class_, meth, type, args)
+    def self.checkSingleTypes(type, args)
       args.each do |value|
         unless checkTypeBase(type, value)
-          putTypeErrorMessage(line, class_, meth, type, value)
+          putTypeErrorMessage(type, value)
         end
       end
     end
-    def self.putTypeErrorMessage(line, class_, meth, type, value, parcount = nil)
-      puts("Error type in line(#{line}), method '#{class_}##{meth}'" +
-               (parcount ? " for par(#{parcount})" : "") +
+    def self.putTypeErrorMessage(type, value, parcount = nil)
+      puts("Error type" + (parcount ? " for par(#{parcount})" : "") +
                ", #{value.class} => #{type}.")
-      exit
+      raise
     end
     def self.checkTypeBase(type, value)
       return type.is_a?(Class) ? value.is_a?(type) : type.any? { |t| value.is_a?(t) }

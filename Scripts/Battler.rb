@@ -41,13 +41,13 @@ module SRPG
       @id     = id
       @type   = type
       @datype = datype
-      compatible_initialize(data)
+      #compatible_initialize(data)
     end
 
     def compatible_initialize(data)
       @old_data = data
       
-      @data = Data::BattlerNew.new
+      @data = Data::Battler.new
       @data.bparam.mhp = data.mhp
       @data.bparam.mmp = data.mmp
       @data.bparam.pat = data.atk

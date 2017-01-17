@@ -2,25 +2,23 @@ require_relative '../Data/Param'
 
 module SRPG
   module Data
-    #--------------------------------------
+    #----------------------------------------
     # + Struct Data::Battler
-    #--------------------------------------
-    class BattlerNew
+    #----------------------------------------
+    class Battler
       #--------------------------------------
-      # + Attribute
+      # + Include
       #--------------------------------------
-      attr_accessor :bparam   # Basic Parameter
-      attr_accessor :mparam   # Map Parameter
+      include BasicParamAccessor # Basic Parameter
+      include MapParamAccessor   # Map Parameter
 
       #--------------------------------------
       # + Initialize
       #--------------------------------------
       def initialize
-        @bparam = BasicParam.new
-        @mparam = MapParam.new
+        init_bparam
+        init_mparam
       end
-    end
-
-    #BattlerNew = Battler
+    end                       
   end
 end

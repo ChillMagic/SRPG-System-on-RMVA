@@ -1,37 +1,50 @@
 # Main Interface
 
-require_relative 'System'
+alias import require_relative
+require_relative '../System'
+require_relative '../Map'
+require_relative '../Data'
 require_relative 'Data/Battler'
 require_relative 'Battler'
+require_relative 'Troop'
+require_relative 'RGSSToData'
 
-module SRPG
-  class Set
-    def initialize(type)
-      Chill.checkSingleType(__LINE__, self.class, __method__, Class, type)
-      @type = type
-      @data = Array.new
-    end
-    def push(*args)
-      Chill.checkSingleTypes(__LINE__, self.class, __method__, @type, args)
-      @data.push(*args)
-    end
-    def pop
-      @data.pop
-    end
-  end
-end
-
-module SRPG
-  class Troop
-    def initialize
-      @data = Set.new(SRPG::Battler)
-    end
-  end
-end
+PropertyToKernel = {
+  mhp: :mhp,
+  pow: :pat,
+  def: :pdf,
+  mag: :mat,
+  mdf: :mdf,
+  tec: :mmp,
+  agi: :agi,
+  luk: :luk,
+  mov: :move,
+  viw: :view
+}
 
 def __main__
-  troop = SRPG::Set.new(SRPG::Battler) #SRPG::Troop.new
-  troop.push(SRPG::Battler.new(0,1,SRPG::Data::Battler.new))
+  DataManager.init
+
+  src = $game_actors[1]
+  note = $data_actors[src.id].note
+  notdat = SRPG::RGSSToData.loadFromNote(note)
+  battler = SRPG::RGSSToData.loadActorToBattler(src)
+  
+  notdat.each do |prop, value|
+    begin
+      battler.send(PropertyToKernel[prop].to_s+'=', value)
+    rescue => res
+      putError(res.to_s)
+    end
+  end
+
+  p battler
+
+  system("pause")
+  exit(0)
 end
 
 __main__
+
+SRPG_KERNEL_VERSION = 0.1
+SRPG_KERNEL_LOADED  = true
